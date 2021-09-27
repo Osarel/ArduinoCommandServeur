@@ -10,7 +10,7 @@ using Robot.Action;
 namespace Robot
 {
 
-    public class Robot
+    public class RobotMain
     {
         public IDictionary<string, Element> Elements { get; private set; }
 
@@ -20,7 +20,7 @@ namespace Robot
         public IDictionary<string, ChatIA> Chat { get; private set; }
         public RobotOption Option { get;  set; }
 
-        public Robot()
+        public RobotMain()
         {
             Elements = new Dictionary<string, Element>();
             Arduinos = new Dictionary<string, Arduino>();

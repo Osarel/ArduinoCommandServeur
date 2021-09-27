@@ -10,7 +10,7 @@ namespace Robot
 
     class ArduinoCommand
     {
-        public static Robot robot;
+        public static RobotMain robot;
         public static SocketServer server;
         public static bool demande_arret = false;
         public static bool demande_restart = false;
@@ -103,7 +103,7 @@ namespace Robot
             Directory.CreateDirectory("Animations");
             Directory.CreateDirectory("Arduinos");
             Directory.CreateDirectory("cache/vocal/");
-            robot = new Robot();
+            robot = new RobotMain();
             robot.LoadDataFromConfig();
             Speaker.LoadVocalCache();
         }

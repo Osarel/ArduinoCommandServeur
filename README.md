@@ -15,15 +15,4 @@
 
 ## How it work
 
-```mermaid
-sequenceDiagram
-Operator ->> Web: Action
-Web->> Operator: Vizualisation
-Web->>Server: Command (json)
-Server->> Web: Command reply (json)
-Server->>Arduino: Command 
-Note right of Server: formated specificly <br />for the server
-Arduino->>Server: Pin information 
-
-Server-->Web: Communication
-```
+![Schematics](https://i.ibb.co/St8dTVc/Image1.png)

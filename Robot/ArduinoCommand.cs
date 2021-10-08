@@ -12,6 +12,7 @@ namespace Robot
     {
         public static RobotMain robot;
         public static SocketServer server;
+        static string version = "1_0_4";
         public static bool demande_arret = false;
         public static bool demande_restart = false;
         static void Main(string[] args)

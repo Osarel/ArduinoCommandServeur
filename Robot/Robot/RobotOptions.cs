@@ -13,6 +13,7 @@
         public string startingAnimator = null;
 
         public bool autoStart = false;
+        public bool autoUpdate = true;
         public bool debug = false;
         public bool AddToList()
         {

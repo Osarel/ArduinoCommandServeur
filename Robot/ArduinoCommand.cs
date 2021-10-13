@@ -4,6 +4,8 @@ using Robot.Serveur;
 using System.IO;
 using System.Diagnostics;
 using System.Reflection;
+using Onova;
+using Onova.Services;
 
 namespace Robot
 {
@@ -12,9 +14,10 @@ namespace Robot
     {
         public static RobotMain robot;
         public static SocketServer server;
-        static string version = "1_0_4";
         public static bool demande_arret = false;
         public static bool demande_restart = false;
+        private static UpdateService _updateService = new UpdateService();
+
         static void Main(string[] args)
         {
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
@@ -28,10 +31,43 @@ namespace Robot
 
         }
 
+
+        public static async void Update()
+        {
+            try
+            {
+                Assembly a = Assembly.GetExecutingAssembly();
+                Console.WriteLine("Version actuelle : {0}" , a.GetName().Version);
+                // Check for updates
+                var updateVersion = await _updateService.CheckForUpdatesAsync();
+                if (updateVersion == null)
+                    return;
+
+                Console.WriteLine("Une mise à jour est disponible !");
+                // Notify user of an update and prepare it
+                Console.WriteLine($"Telechargement de la mise à jour v{updateVersion}...");
+                await _updateService.PrepareUpdateAsync(updateVersion);
+
+                // Prompt user to install update (otherwise install it when application exits)
+                Console.WriteLine("Redemarrage pour installation");
+                _updateService.FinalizeUpdate(true);
+                demande_arret = true;
+                StopProg();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                Console.WriteLine(e.StackTrace);
+                // Failure to update shouldn't crash the application
+                Console.WriteLine("Failed to perform application update");
+            }
+        }
+
         public static void StartProg(string[] args)
         {
             //Chargement des fichiers du robot
             Load();
+            Update();
             Speaker.say("Démarrage du robot en cours..");
             Console.WriteLine("Chargement du fichier fini");
             //Lancement du serveur Websocketg

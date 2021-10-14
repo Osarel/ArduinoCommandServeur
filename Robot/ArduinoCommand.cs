@@ -71,7 +71,7 @@ namespace Robot
             Speaker.say("Démarrage du robot en cours..");
             Console.WriteLine("Chargement du fichier fini");
             //Lancement du serveur Websocketg
-            Thread thread = new Thread(() =>
+            Thread robotThread = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = true;
                 bool started = false;
@@ -89,8 +89,15 @@ namespace Robot
                     }
                 }
             });
-            thread.Start();
-            if (robot.Option.autoStart)
+            robotThread.Start();
+
+            Thread webThread = new  Thread(() =>
+            {
+                Thread.CurrentThread.IsBackground = true;
+                new Web.WebServeurHandler();
+            });
+            webThread.Start();
+                if (robot.Option.autoStart)
             {
                 robot.StartRobot();
             } else

@@ -13,13 +13,13 @@
     <RootNamespace>Arduinocommandserveur</RootNamespace>
     <ApplicationIcon>icon.ico</ApplicationIcon>
     <NoWin32Manifest>true</NoWin32Manifest>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <NeutralLanguage></NeutralLanguage>
     <Authors>Raphaël Carvalho</Authors>
     <Company>craphael.fr</Company>
     <Copyright>Raphaël Carvalho</Copyright>
     <StartupObject>Robot.ArduinoCommand</StartupObject>
-    <AssemblyVersion>1.1.0</AssemblyVersion>
+    <AssemblyVersion>1.1.1</AssemblyVersion>
     <FileVersion>1.1.0</FileVersion>
     <PackageLicenseFile>LICENCE</PackageLicenseFile>
     
@@ -44,11 +44,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Data\Website\" />
     <Folder Include="Socket\" />
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="EmbedIO" Version="3.4.3" />
     <PackageReference Include="Fleck" Version="1.2.0" />
     <PackageReference Include="Google.Cloud.TextToSpeech.V1" Version="2.3.0" />
     <PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.18.0" />
@@ -60,7 +62,11 @@
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.5.3.20210817" />
     <PackageReference Include="System.IO.Ports" Version="5.0.1" />
   </ItemGroup>
-
+  <ItemGroup>
+    <Content Include="Data\**">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <Compile Remove="Utils\AnimatorConverter.cs" />
     <Compile Remove="Utils\AnimatorConverter %28copy%29.cs" />

@@ -84,6 +84,7 @@ namespace Robot
                 try
                 {
                     port.Open();
+                    ArduinoCommand.eventG.FireArduinoConnectEvent(this);
                     return true;
                 }
                 catch (Exception)
@@ -183,7 +184,7 @@ namespace Robot
 
         public bool Stop()
         {
-
+            ArduinoCommand.eventG.FireArduinoDisconnectEvent(this);
             //Déconnexion de l'arduino
             if (port != null && port.IsOpen)
             {

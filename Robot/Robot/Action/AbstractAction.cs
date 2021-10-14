@@ -55,10 +55,11 @@ namespace Robot.Action
             {
                 Thread.CurrentThread.IsBackground = Async;
                 Launch(sheet, caller);
-                Stop(sheet);
+                Stop(sheet, false);
                 CallOutput(sheet);
             }
             );
+            ArduinoCommand.eventG.FireActionStartedEvent(sheet, caller, this);
             thread.Start();
             return thread;
         }
@@ -79,29 +80,20 @@ namespace Robot.Action
             }
         }
 
-        public virtual void Stop(Sheet sheet)
+        public virtual void Stop(Sheet sheet, bool force)
         {
+            if (thread != null && force)
+            {
+                thread.Abort();
+            }
             Running = false;
             sheet.currentAction.Remove(ID);
             if (ArduinoCommand.robot.Option.debug)
             {
                 Console.WriteLine("Arret de : " + Type);
             }
+            ArduinoCommand.eventG.FireActionFinishEvent(sheet, this);
         }
-
-        public virtual void ForceStop()
-        {
-            if (thread != null)
-            {
-                thread.Abort();
-            }
-            Running = false;
-            if (ArduinoCommand.robot.Option.debug)
-            {
-                Console.WriteLine("Arret de : " + Type);
-            }
-        }
-
 
         protected abstract void Launch(Sheet sheet, Liaison caller);
 

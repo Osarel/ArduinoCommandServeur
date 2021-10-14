@@ -2,7 +2,7 @@
 using System;
 namespace Robot.Event.Args
 {
-    class BrowserConnectEvent : EventArgs
+    public class BrowserConnectEvent : EventArgs
     {
         public IWebSocketConnection Connection { get; } 
 
@@ -11,7 +11,7 @@ namespace Robot.Event.Args
             this.Connection = Connection;
         }
     }
-    class BrowserDisconnectEvent : EventArgs
+    public class BrowserDisconnectEvent : EventArgs
     {
         public IWebSocketConnection Connection { get; }
 

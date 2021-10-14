@@ -43,6 +43,7 @@ namespace Robot.Action
         
         public bool StartSheet(Dictionary<string, object> variable)
         {
+            ArduinoCommand.eventG.FireSheetStartedEvent(this, variable);
             if (currentAction.Count > 0)
             { 
                 return false;
@@ -69,13 +70,14 @@ namespace Robot.Action
             {
                 ForceStopAction(a);
             }
+            ArduinoCommand.eventG.FireSheetFinishEvent(this);
         }
 
         public void ForceStopAction(string id)
         {
             if (action.TryGetValue(id, out AbstractAction a))
             {
-                a.ForceStop();
+                a.Stop(this, true);
             }
         }
 

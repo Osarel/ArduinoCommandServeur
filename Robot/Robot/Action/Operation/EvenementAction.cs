@@ -50,7 +50,7 @@ namespace Robot.Action
                 Element element = (Element)sender;
                 element.ActualValueChangedHandler -= ObservatorList[id];
                 ObservatorList.Remove(id);
-                base.Stop(sheet);
+                base.Stop(sheet, false);
 
             }
         }

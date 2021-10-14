@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Robot.Event.Args
 {
-    class ArduinoConnect : EventArgs
+    public class ArduinoConnect : EventArgs
     {
         public Arduino Arduino { get; } 
 
@@ -11,7 +11,7 @@ namespace Robot.Event.Args
         }
     }
 
-    class ArduinoDisconnect : EventArgs
+    public class ArduinoDisconnect : EventArgs
     {
         public Arduino Arduino { get; }
 

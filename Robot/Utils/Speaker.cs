@@ -22,6 +22,11 @@ namespace Robot
 
         public static void say(string message)
         {
+            ArduinoCommand.eventG.FireSpeakingStartEvent(message);
+            if (ArduinoCommand.robot.Option.debug)
+            {
+                Console.WriteLine("Parole : {0}", message);
+            }
             if (cache.TryGetValue(message, out string idCache))
             {
                 PlayAudio(new StringBuilder("cache/vocal/").Append(idCache.ToString()).Append(".wav").ToString());
@@ -132,6 +137,7 @@ namespace Robot
                 {
                     Thread.Sleep(1000);
                 }
+                ArduinoCommand.eventG.FireSpeakingStopEvent(file);
             }
         }
 

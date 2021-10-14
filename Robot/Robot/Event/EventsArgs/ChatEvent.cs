@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Robot.Event.Args
 {
-    class SpeakingStartEvent : EventArgs
+    public class SpeakingStartEvent : EventArgs
     {
         public string Phrase { get; } 
 
@@ -11,16 +11,16 @@ namespace Robot.Event.Args
         }
     }
 
-    class SpeakingStopEvent : EventArgs
+    public class SpeakingStopEvent : EventArgs
     {
         public string Phrase { get; }
 
-        public SpeakingStopEvent(string Phrase)
+        public SpeakingStopEvent(string file)
         {
             this.Phrase = Phrase;
         }
     }
-    class UserChatEvent : EventArgs
+    public class UserChatEvent : EventArgs
     {
         public string Phrase { get; }
 

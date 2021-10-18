@@ -19,6 +19,9 @@ namespace Robot
 
         static void Main(string[] args)
         {
+            Console.BackgroundColor = ConsoleColor.Blue;
+            Console.Clear();
+            ConsoleLoggerProvider.LoggerCreate();
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
             //GESTION DES EVENTS

@@ -43,7 +43,7 @@ namespace Robot
                 case ActionType.DIVERGENCE:
                     return JsonConvert.DeserializeObject<DivergenceAction>(jo.ToString(), SpecifiedSubclassConversion);
                 case ActionType.EXECUTOR:
-                    return JsonConvert.DeserializeObject<SheetExecutorAction>(jo.ToString(), SpecifiedSubclassConversion);
+                    return JsonConvert.DeserializeObject<ExecutorAction>(jo.ToString(), SpecifiedSubclassConversion);
                 case ActionType.LED:
                     return JsonConvert.DeserializeObject<LEDEffectAction>(jo.ToString(), SpecifiedSubclassConversion);
                 case ActionType.MOVE:

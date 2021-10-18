@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Threading;
 
 namespace Robot.Action
 {
@@ -21,8 +20,7 @@ namespace Robot.Action
 
         protected override void Launch(Sheet sheet, Liaison caller)
         {
-            PIN pin = ArduinoCommand.robot.GetElementByUUID(Element) as PIN;
-            if (pin == null)
+            if (!(ArduinoCommand.robot.GetElementByUUID(Element) is PIN pin))
             {
                 return;
             }
@@ -39,4 +37,3 @@ namespace Robot.Action
 
 
 }
-    

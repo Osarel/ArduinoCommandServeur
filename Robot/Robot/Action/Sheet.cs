@@ -6,7 +6,7 @@ using System.Threading;
 namespace Robot.Action
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Sheet : UpdatableElement
+    public class Sheet : IUpdatableElement
     {
         [JsonProperty]
         public readonly string ID;
@@ -40,12 +40,12 @@ namespace Robot.Action
             }
         }
 
-        
+
         public bool StartSheet(Dictionary<string, object> variable)
         {
             ArduinoCommand.eventG.FireSheetStartedEvent(this, variable);
             if (currentAction.Count > 0)
-            { 
+            {
                 return false;
             }
             if (variable != null)
@@ -53,7 +53,8 @@ namespace Robot.Action
                 this.variable = variable;
             }
             Console.WriteLine("Démarrage de l'animation : " + Name);
-            foreach (Liaison value in startupPoint) {
+            foreach (Liaison value in startupPoint)
+            {
                 Thread thread = new Thread(() =>
                 {
                     Thread.CurrentThread.IsBackground = true;
@@ -88,9 +89,9 @@ namespace Robot.Action
 
         public float ReadFloat(string variable)
         {
-            if(this.variable.TryGetValue(variable, out object value))
-            {   
-                return (float) value;
+            if (this.variable.TryGetValue(variable, out object value))
+            {
+                return (float)value;
             }
             if (ArduinoCommand.robot.Elements.TryGetValue(variable, out Element e))
             {
@@ -127,7 +128,7 @@ namespace Robot.Action
             return true;
         }
 
-        public UpdatableElement GetLastInstance()
+        public IUpdatableElement GetLastInstance()
         {
             return ArduinoCommand.robot.Animations[ID];
         }

@@ -1,16 +1,14 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO.Ports;
-using System.Text;
-using System.Threading;
-using Newtonsoft.Json;
 
 namespace Robot
 {
     [JsonObject(MemberSerialization.OptIn)]
-    public class Arduino : UpdatableElement
+    public class Arduino : IUpdatableElement
     {
-        string[] STOPCHAR = { "\r\n", "\n", "\r" };
+        readonly string[] STOPCHAR = { "\r\n", "\n", "\r" };
         private string _data = "";
 
         [JsonProperty]
@@ -51,8 +49,8 @@ namespace Robot
             if (!PinAction.ContainsKey(pin))
             {
                 PinAction.Add(pin, new List<ThreadActionPin>());
-            } 
-                PinAction[pin].Add(actionpin);
+            }
+            PinAction[pin].Add(actionpin);
             Console.WriteLine("a " + PinAction[pin].Count);
         }
         public Arduino(string Name, string ID, string PortName, int BaudRate)
@@ -76,10 +74,12 @@ namespace Robot
 
             if ((port == null || !port.IsOpen) && PortName.Length > 0 && !PortName.Equals("No port"))
             {
-                port = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One);
-                port.Handshake = Handshake.XOnXOff;
-                port.ReadTimeout = 999999;
-                port.WriteTimeout = 999999;
+                port = new SerialPort(PortName, BaudRate, Parity.None, 8, StopBits.One)
+                {
+                    Handshake = Handshake.XOnXOff,
+                    ReadTimeout = 999999,
+                    WriteTimeout = 999999
+                };
                 port.DataReceived += new SerialDataReceivedEventHandler(Port_DataReceived);
                 try
                 {
@@ -95,13 +95,14 @@ namespace Robot
             return false;
         }
 
-        private void MethodToCall(string valeur) {
+        private void MethodToCall(string valeur)
+        {
             Console.WriteLine(valeur);
             try
             {
                 Dictionary<string, object> request = JsonConvert.DeserializeObject<Dictionary<string, object>>(valeur);
                 List<ThreadActionPin> ap = PinAction[(int)(long)request["pin"]];
-                
+
                 foreach (ThreadActionPin i in ap)
                 {
                     if (i != null)
@@ -109,9 +110,10 @@ namespace Robot
                         i.GetAction()(request, i.GetObject());
                     }
                     //déclanchement du callback
-                    
+
                 }
-            } catch
+            }
+            catch
             {
                 Console.WriteLine("Erreur reception arduino");
             }
@@ -177,7 +179,7 @@ namespace Robot
                 //ecriture des données dans l'arduino
                 Console.WriteLine(data);
                 port.WriteLine(data + "\n");
-                return true; 
+                return true;
             }
             return false;
         }
@@ -211,14 +213,15 @@ namespace Robot
             return true;
         }
 
-        public UpdatableElement GetLastInstance()
+        public IUpdatableElement GetLastInstance()
         {
             return ArduinoCommand.robot.GetArduinoByUUID(ID);
         }
     }
 
 
-    public class ArduinoStatus{
+    public class ArduinoStatus
+    {
 
         public string Name { get; private set; }
         public bool Connected { get; private set; }

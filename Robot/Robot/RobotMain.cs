@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Robot.Action;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using Robot.Action;
 
 namespace Robot
 {
@@ -18,7 +18,7 @@ namespace Robot
 
         public IDictionary<string, Sheet> Animations { get; private set; }
         public IDictionary<string, ChatIA> Chat { get; private set; }
-        public RobotOption Option { get;  set; }
+        public RobotOption Option { get; set; }
 
         public RobotMain()
         {
@@ -99,15 +99,15 @@ namespace Robot
             {
                 case "element":
                     ArduinoCommand.robot.Elements.Remove(id);
-                    deleteFileStorage("Elements", ".elem", id);
+                    DeleteFileStorage("Elements", ".elem", id);
                     break;
                 case "sheet":
                     ArduinoCommand.robot.Animations.Remove(id);
-                    deleteFileStorage("Animations", ".anim", id);
+                    DeleteFileStorage("Animations", ".anim", id);
                     break;
                 case "arduino":
                     ArduinoCommand.robot.Arduinos.Remove(id);
-                    deleteFileStorage("Arduinos", ".ard", id);
+                    DeleteFileStorage("Arduinos", ".ard", id);
                     break;
                 case "chat":
                     ArduinoCommand.robot.Chat.Remove(id);
@@ -118,7 +118,7 @@ namespace Robot
             return false;
         }
 
-        private void deleteFileStorage(string type, string extentions, string id)
+        private void DeleteFileStorage(string type, string extentions, string id)
         {
             string path = new StringBuilder(Directory.GetCurrentDirectory())
                 .Append("/")
@@ -164,7 +164,8 @@ namespace Robot
                     JsonSerializer serializer = new JsonSerializer();
                     Sheet sheet = (Sheet)serializer.Deserialize(file, typeof(Sheet));
                     Animations.Add(sheet.ID, sheet);
-                } catch (Exception e)
+                }
+                catch (Exception e)
                 {
                     Console.WriteLine("Echec dans la récuperation de l'animation : " + value);
                     Console.WriteLine(e.Message);
@@ -211,7 +212,7 @@ namespace Robot
                 catch (Exception e)
                 {
                     Console.WriteLine("Echec dans la récuperation de l'arduino : " + value);
-                    Console.WriteLine(e.ToString()) ;
+                    Console.WriteLine(e.ToString());
                 }
             }
         }
@@ -377,7 +378,7 @@ namespace Robot
             {
                 switch (entry.Value.Type)
                 {
-                    case ElementType.SERVOMOTOR: 
+                    case ElementType.SERVOMOTOR:
                         (entry.Value as ServoMotor).ServoDetach();
                         break;
                     case ElementType.LED:
@@ -390,11 +391,13 @@ namespace Robot
         public Dictionary<string, JObject> GetElementsInfo()
         {
             Dictionary<string, JObject> result = new Dictionary<string, JObject>();
-            foreach(Element value in Elements.Values)
+            foreach (Element value in Elements.Values)
             {
-                JObject o = new JObject();
-                o.Add("type", Enum.GetName(typeof(ElementType), value.Type));
-                o.Add("position" , value.Position);  
+                JObject o = new JObject
+                {
+                    { "type", Enum.GetName(typeof(ElementType), value.Type) },
+                    { "position", value.Position }
+                };
                 result.Add(value.ID, o);
             }
             return result;

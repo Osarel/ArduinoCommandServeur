@@ -13,7 +13,7 @@ namespace Robot.Action
         public readonly int Input;
         public static IDictionary<string, int> Finish = new Dictionary<string, int>();
         [JsonConstructor]
-        public ConvergenceAction(string ID, int Input, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONVERGENCE, false, ID, Position,  Output)
+        public ConvergenceAction(string ID, int Input, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONVERGENCE, false, ID, Position, Output)
         {
             Finish[ID] = 0;
             this.Input = Input;
@@ -23,21 +23,22 @@ namespace Robot.Action
         {
             Launch(sheet, caller);
 
-            return thread;
+            return Routine;
         }
 
         protected override void Launch(Sheet sheet, Liaison caller)
         {
             Finish[ID] = Finish[ID] + 1;
-            if (Finish[ID] >= Input)  
+            if (Finish[ID] >= Input)
             {
                 if (ArduinoCommand.robot.Option.debug)
                 {
                     Console.WriteLine("Passage de la convergence");
                 }
-                Finish[ID] = 0; 
+                Finish[ID] = 0;
                 base.CallOutput(sheet);
-            } else
+            }
+            else
             {
                 CallOutput(sheet);
             }

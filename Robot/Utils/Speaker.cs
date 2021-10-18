@@ -1,14 +1,12 @@
-﻿using System;
+﻿using Google.Cloud.TextToSpeech.V1;
+using Microsoft.CognitiveServices.Speech;
+using NAudio.Wave;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using Google.Cloud.TextToSpeech.V1;
-using Microsoft.CognitiveServices.Speech;
-using Microsoft.CognitiveServices.Speech.Audio;
-using NAudio.Wave;
-using Newtonsoft.Json;
 
 namespace Robot
 {
@@ -20,7 +18,7 @@ namespace Robot
         {
         }
 
-        public static void say(string message)
+        public static void Say(string message)
         {
             ArduinoCommand.eventG.FireSpeakingStartEvent(message);
             if (ArduinoCommand.robot.Option.debug)
@@ -45,7 +43,7 @@ namespace Robot
                     break;
             }
 
-         
+
         }
 
         public static async void SayWithMicrosoftRecognition(string message)
@@ -57,28 +55,26 @@ namespace Robot
             var fileName = "cache/vocal/" + id.ToString() + ".wav";
             using (var fileOutput = Microsoft.CognitiveServices.Speech.Audio.AudioConfig.FromWavFileOutput(fileName))
             {
-                using (var synthesizer = new SpeechSynthesizer(config, fileOutput))
+                using var synthesizer = new SpeechSynthesizer(config, fileOutput);
+                var text = message;
+                var result = await synthesizer.SpeakTextAsync(text);
+
+                if (result.Reason == ResultReason.SynthesizingAudioCompleted)
                 {
-                    var text = message;
-                    var result = await synthesizer.SpeakTextAsync(text);
+                    cache[text] = id.ToString();
+                    Console.WriteLine($"Parole synthétisé sur [{fileName}] pour le texte [{text}]");
+                    SaveVocalCache();
+                }
+                else if (result.Reason == ResultReason.Canceled)
+                {
+                    var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
+                    Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
 
-                    if (result.Reason == ResultReason.SynthesizingAudioCompleted)
+                    if (cancellation.Reason == CancellationReason.Error)
                     {
-                        cache[text] = id.ToString();
-                        Console.WriteLine($"Parole synthétisé sur [{fileName}] pour le texte [{text}]");
-                        SaveVocalCache();
-                    }
-                    else if (result.Reason == ResultReason.Canceled)
-                    {
-                        var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
-                        Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
-
-                        if (cancellation.Reason == CancellationReason.Error)
-                        {
-                            Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                            Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-                            Console.WriteLine($"CANCELED: Did you update the subscription info?");
-                        }
+                        Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                        Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+                        Console.WriteLine($"CANCELED: Did you update the subscription info?");
                     }
                 }
             }
@@ -99,7 +95,7 @@ namespace Robot
             var voiceSelection = new VoiceSelectionParams
             {
                 LanguageCode = ArduinoCommand.robot.Option.langue,
-                SsmlGender = (SsmlVoiceGender) Enum.Parse(typeof(SsmlVoiceGender), ArduinoCommand.robot.Option.genre)
+                SsmlGender = (SsmlVoiceGender)Enum.Parse(typeof(SsmlVoiceGender), ArduinoCommand.robot.Option.genre)
             };
 
             // Specify the type of audio file.
@@ -127,18 +123,16 @@ namespace Robot
 
         public static void PlayAudio(string file)
         {
-            using (var audioFile = new AudioFileReader(file))
-            using (var outputDevice = new WaveOutEvent())
+            using var audioFile = new AudioFileReader(file);
+            using var outputDevice = new WaveOutEvent();
+            outputDevice.Init(audioFile);
+            Thread.Sleep(500);
+            outputDevice.Play();
+            while (outputDevice.PlaybackState == PlaybackState.Playing)
             {
-                outputDevice.Init(audioFile);
-                Thread.Sleep(500);
-                outputDevice.Play();
-                while (outputDevice.PlaybackState == PlaybackState.Playing)
-                {
-                    Thread.Sleep(1000);
-                }
-                ArduinoCommand.eventG.FireSpeakingStopEvent(file);
+                Thread.Sleep(1000);
             }
+            ArduinoCommand.eventG.FireSpeakingStopEvent(file);
         }
 
         public static void LoadVocalCache()
@@ -150,7 +144,7 @@ namespace Robot
                 using StreamReader file = File.OpenText(filePath);
                 JsonSerializer serializer = new JsonSerializer();
                 Console.WriteLine("Dossier trouver en cours de  récuperation.");
-                cache =(Dictionary<string, string>) serializer.Deserialize(file, typeof(Dictionary<string, string>));
+                cache = (Dictionary<string, string>)serializer.Deserialize(file, typeof(Dictionary<string, string>));
             }
         }
 

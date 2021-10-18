@@ -1,7 +1,7 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using System;
 
 namespace Robot
 {
@@ -27,17 +27,13 @@ namespace Robot
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             JObject jo = JObject.Load(reader);
-            switch (Enum.Parse(typeof(ElementType), jo["Type"].Value<string>()))
+            return Enum.Parse(typeof(ElementType), jo["Type"].Value<string>()) switch
             {
-                case ElementType.SERVOMOTOR:
-                    return JsonConvert.DeserializeObject<ServoMotor>(jo.ToString(), SpecifiedSubclassConversion);
-                case ElementType.LED:
-                    return JsonConvert.DeserializeObject<LED>(jo.ToString(), SpecifiedSubclassConversion);
-                case ElementType.PIN:
-                    return JsonConvert.DeserializeObject<PIN>(jo.ToString(), SpecifiedSubclassConversion);
-                default:
-                    throw new Exception();
-            }
+                ElementType.SERVOMOTOR => JsonConvert.DeserializeObject<ServoMotor>(jo.ToString(), SpecifiedSubclassConversion),
+                ElementType.LED => JsonConvert.DeserializeObject<LED>(jo.ToString(), SpecifiedSubclassConversion),
+                ElementType.PIN => JsonConvert.DeserializeObject<PIN>(jo.ToString(), SpecifiedSubclassConversion),
+                _ => throw new Exception(),
+            };
             throw new NotImplementedException();
         }
 

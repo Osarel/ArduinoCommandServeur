@@ -30,7 +30,7 @@ namespace Robot.Event
         public GlobalEvent()
         {
         }
-        
+
         /*
          * EVENT ROBOT
          */

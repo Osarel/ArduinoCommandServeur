@@ -1,12 +1,11 @@
 ﻿using Robot.Action;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Robot
 {
 
-    public class ChatIA : UpdatableElement
+    public class ChatIA : IUpdatableElement
     {
 
         public string ID { get; private set; }
@@ -24,14 +23,14 @@ namespace Robot
 
         public static Task<bool> ExecuteChatCommand(string command)
         {
+            ArduinoCommand.eventG.FireUserChatEvent(command);
             return Task.Run(() =>
             {
                 foreach (KeyValuePair<string, ChatIA> value in ArduinoCommand.robot.Chat)
-                { 
+                {
                     if (DamerauLevenshteinDistance.Get(command, value.Value.Message) <= value.Value.DistanceMAX)
                     {
                         Sheet sheet = ArduinoCommand.robot.GetSheetByUUID(value.Value.Action);
-                        Console.WriteLine("Ici");
                         if (sheet != null)
                         {
                             sheet.StartSheet(null);
@@ -60,7 +59,7 @@ namespace Robot
             return true;
         }
 
-        public UpdatableElement GetLastInstance()
+        public IUpdatableElement GetLastInstance()
         {
             return ArduinoCommand.robot.Chat[ID];
         }

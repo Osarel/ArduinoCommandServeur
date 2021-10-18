@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System.Threading;
 using System;
+using System.Threading;
 using static Robot.Action.Liaison;
 
 namespace Robot.Action
@@ -27,7 +27,7 @@ namespace Robot.Action
         public PointPosition Position;
 
 
-        public Thread thread { get; private set; }
+        public Thread Routine { get; private set; }
 
         [JsonConstructor]
         public AbstractAction(ActionType Type, bool Async, string ID, PointPosition Position, Liaison[] Output)
@@ -43,7 +43,7 @@ namespace Robot.Action
         {
             if (Running)
             {
-                return null; 
+                return null;
             }
             if (ArduinoCommand.robot.Option.debug)
             {
@@ -51,7 +51,7 @@ namespace Robot.Action
             }
             Running = true;
             sheet.currentAction.Add(ID);
-            thread = new Thread(() =>
+            Routine = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = Async;
                 Launch(sheet, caller);
@@ -60,8 +60,8 @@ namespace Robot.Action
             }
             );
             ArduinoCommand.eventG.FireActionStartedEvent(sheet, caller, this);
-            thread.Start();
-            return thread;
+            Routine.Start();
+            return Routine;
         }
 
 
@@ -82,9 +82,9 @@ namespace Robot.Action
 
         public virtual void Stop(Sheet sheet, bool force)
         {
-            if (thread != null && force)
+            if (Routine != null && force)
             {
-                thread.Abort();
+                Routine.Abort();
             }
             Running = false;
             sheet.currentAction.Remove(ID);
@@ -99,7 +99,8 @@ namespace Robot.Action
 
     }
 
-    public enum ActionType{
+    public enum ActionType
+    {
         WAIT,
         SERVO,
         DIGITAL,

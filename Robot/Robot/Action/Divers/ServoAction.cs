@@ -19,8 +19,7 @@ namespace Robot.Action
 
         protected override void Launch(Sheet sheet, Liaison caller)
         {
-            ServoMotor servo = ArduinoCommand.robot.GetElementByUUID(Element) as ServoMotor;
-            if (servo == null)
+            if (!(ArduinoCommand.robot.GetElementByUUID(Element) is ServoMotor servo))
             {
                 return;
             }
@@ -30,4 +29,3 @@ namespace Robot.Action
         }
     }
 }
-    

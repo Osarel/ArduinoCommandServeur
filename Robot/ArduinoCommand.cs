@@ -1,13 +1,10 @@
-﻿using System;
-using System.Threading;
+﻿using Robot.Event;
 using Robot.Serveur;
-using System.IO;
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Reflection;
-using Onova;
-using Onova.Services;
-using Robot.Event;
-using Robot.Event.Args;
+using System.Threading;
 namespace Robot
 {
 
@@ -18,7 +15,7 @@ namespace Robot
         public static GlobalEvent eventG;
         public static bool demande_arret = false;
         public static bool demande_restart = false;
-        private static UpdateService _updateService = new UpdateService();
+        private static readonly UpdateService _updateService = new UpdateService();
 
         static void Main(string[] args)
         {
@@ -45,7 +42,7 @@ namespace Robot
             try
             {
                 Assembly a = Assembly.GetExecutingAssembly();
-                Console.WriteLine("Version actuelle : {0}" , a.GetName().Version);
+                Console.WriteLine("Version actuelle : {0}", a.GetName().Version);
                 Console.WriteLine("Recherche d'une mise à jour...");
                 // Recherche d'une mise à jour
                 var updateVersion = await _updateService.CheckForUpdatesAsync();
@@ -65,7 +62,7 @@ namespace Robot
                 demande_arret = true;
                 StopProg();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Console.WriteLine(e.Message);
                 Console.WriteLine(e.StackTrace);
@@ -79,7 +76,7 @@ namespace Robot
             //Chargement des fichiers du robot
             Load();
             Update();
-            Speaker.say("Démarrage du robot en cours..");
+            Speaker.Say("Démarrage du robot en cours..");
             Console.WriteLine("Chargement du fichier fini");
             //Lancement du serveur Websocketg
             Thread robotThread = new Thread(() =>
@@ -103,16 +100,17 @@ namespace Robot
             robotThread.Start();
 
             //Demarrage du serveur WEB
-            Thread webThread = new  Thread(() =>
-            {
-                Thread.CurrentThread.IsBackground = true;
-                new Web.WebServeurHandler();
-            });
+            Thread webThread = new Thread(() =>
+           {
+               Thread.CurrentThread.IsBackground = true;
+               new Web.WebServeurHandler();
+           });
             webThread.Start();
-                if (robot.Option.autoStart)
+            if (robot.Option.autoStart)
             {
                 robot.StartRobot();
-            } else
+            }
+            else
             {
                 Console.WriteLine("Attente démarrage du robot");
             }
@@ -147,7 +145,7 @@ namespace Robot
             {
                 var fileName = Assembly.GetExecutingAssembly().Location;
                 fileName = fileName.Remove(fileName.Length - 4);
-                fileName = fileName + ".exe";
+                fileName += ".exe";
                 Console.Write("Redemarrage en cours !");
                 Process.Start(fileName);
             }
@@ -157,7 +155,7 @@ namespace Robot
         {
 
         }
-         
+
         public static void Load()
         {
             Directory.CreateDirectory("Elements");

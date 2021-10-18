@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Fleck;
+using System;
 using System.Collections.Generic;
-using Fleck;
 
-namespace Robot.Serveur 
+namespace Robot.Serveur
 {
     enum SocketType
     {
@@ -51,10 +51,12 @@ namespace Robot.Serveur
                     Console.WriteLine("Connexion ouverte avec " + socket.ConnectionInfo.ClientIpAddress);
                     connected[socket] = false;
                     _ = socket.Send(authentificationPremadeRequest);
+                    ArduinoCommand.eventG.FireBrowserConnectEvent(socket);
                 };
                 socket.OnClose = () =>
                 {
                     Console.WriteLine("Close connexion with web user!");
+                    ArduinoCommand.eventG.FireBrowserDisconnectEvent(socket);
                     connected.Remove(socket);
                 };
                 socket.OnMessage = message =>

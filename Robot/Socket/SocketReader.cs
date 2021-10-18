@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Fleck;
+﻿using Fleck;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Robot.Action;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 namespace Robot.Serveur
 {
 
@@ -22,11 +22,12 @@ namespace Robot.Serveur
 
         public bool Validate()
         {
-            if (!socketRequest.ContainsKey("type") || !Enum.GetNames(typeof(SocketType)).Contains(socketRequest["type"])) {
+            if (!socketRequest.ContainsKey("type") || !Enum.GetNames(typeof(SocketType)).Contains(socketRequest["type"]))
+            {
                 return false;
             }
 
-            Executor = getSocketReplyBuilder();
+            Executor = GetSocketReplyBuilder();
             //SI LA FONCTION NEXISTE PAS CANCEL LA DEMANDE
             if (Executor == null)
             {
@@ -44,51 +45,32 @@ namespace Robot.Serveur
             return Executor.Validate();
         }
 
-        public SocketReplyExecutor getSocketReplyBuilder()
+        public SocketReplyExecutor GetSocketReplyBuilder()
         {
 
-            switch (Enum.Parse(typeof(SocketType),(string) socketRequest["type"]))
+            return Enum.Parse(typeof(SocketType), (string)socketRequest["type"]) switch
             {
-                case SocketType.AUTHENTIFICATION:
-                    return new ExecutorAuthentification(this);
-                case SocketType.PORTLISTE:
-                    return new ExecutorPortListe(this);
-                case SocketType.SYSTEMSTATUS:
-                    return new ExecutorSystemStatus(this);
-                case SocketType.START:
-                    return new ExecutorStartSystem(this);
-                case SocketType.STOP:
-                    return new ExecutorStopSystem(this);
-                case SocketType.RESTART:
-                    return new ExecutorRestartSystem(this);
-                case SocketType.STOPMOVE:
-                    return new ExecutorStopMove(this);
-                case SocketType.CREATE:
-                    return new ExecutorCreate(this);
-                case SocketType.UPDATE:
-                    return new ExecutorUpdate(this);
-                case SocketType.REMOVE:
-                    return new ExecutorRemove(this);
-                case SocketType.GET:
-                    return new ExecutorGET(this);
-                case SocketType.GETLIST:
-                    return new ExecutorGETList(this);
+                SocketType.AUTHENTIFICATION => new ExecutorAuthentification(this),
+                SocketType.PORTLISTE => new ExecutorPortListe(this),
+                SocketType.SYSTEMSTATUS => new ExecutorSystemStatus(this),
+                SocketType.START => new ExecutorStartSystem(this),
+                SocketType.STOP => new ExecutorStopSystem(this),
+                SocketType.RESTART => new ExecutorRestartSystem(this),
+                SocketType.STOPMOVE => new ExecutorStopMove(this),
+                SocketType.CREATE => new ExecutorCreate(this),
+                SocketType.UPDATE => new ExecutorUpdate(this),
+                SocketType.REMOVE => new ExecutorRemove(this),
+                SocketType.GET => new ExecutorGET(this),
+                SocketType.GETLIST => new ExecutorGETList(this),
                 // case SocketType.CONTROL:
                 //return new ExecutorControl(this);
-                case SocketType.SERVOCONTROL:
-                    return new ExecutorServoControl(this);
-                case SocketType.LEDCONTROL:
-                    return new ExecutorLEDControl(this);
-                case SocketType.STARTANIMATION:
-                    return new ExecutorStartAnimation(this);
-
-                case SocketType.IACHATGET:
-                    return new ExecutorIAChatGet(this);
-                case SocketType.IACHATEXECUTE:
-                    return new ExecutorIAChatExecute(this);
-                default:
-                    return null;
-            }
+                SocketType.SERVOCONTROL => new ExecutorServoControl(this),
+                SocketType.LEDCONTROL => new ExecutorLEDControl(this),
+                SocketType.STARTANIMATION => new ExecutorStartAnimation(this),
+                SocketType.IACHATGET => new ExecutorIAChatGet(this),
+                SocketType.IACHATEXECUTE => new ExecutorIAChatExecute(this),
+                _ => null,
+            };
         }
     }
 
@@ -113,7 +95,7 @@ namespace Robot.Serveur
     }
 
 
-     public class ExecutorAuthentification : SocketReplyExecutor
+    public class ExecutorAuthentification : SocketReplyExecutor
     {
 
         public ExecutorAuthentification(SocketReader reader) : base(reader)
@@ -134,8 +116,9 @@ namespace Robot.Serveur
             {
                 //Succes envoie d'un socket confirmant la connexion
                 ArduinoCommand.server.connected[reader.client] = true;
-                reader.client.Send(new SocketReply(SocketType.AUTHENTIFICATION , false).Build());
-            } else
+                reader.client.Send(new SocketReply(SocketType.AUTHENTIFICATION, false).Build());
+            }
+            else
             {
                 //Echec envoie d'un socket ne confirmant pas la connexion
                 //et deconnexion
@@ -287,7 +270,7 @@ namespace Robot.Serveur
                 return false;
             }
             return true;
-            
+
         }
 
         public override bool Execute()
@@ -296,14 +279,13 @@ namespace Robot.Serveur
             {
                 IDictionary<string, Element> elements = ArduinoCommand.robot.Elements;
                 string id = (string)reader.socketRequest["id"];
-                int position = (int)(long) reader.socketRequest["position"];
+                int position = (int)(long)reader.socketRequest["position"];
                 if (!elements.ContainsKey(id))
                 {
                     reader.client.Send(new SocketReply(SocketType.SERVOCONTROL, true).AddErrorMessage("ERREUR PIN INCORRECT").Build());
                     return false;
                 }
-                ServoMotor servo = elements[id] as ServoMotor;
-                if (servo == null)
+                if (!(elements[id] is ServoMotor servo))
                 {
                     reader.client.Send(new SocketReply(SocketType.SERVOCONTROL, true).AddErrorMessage("ERREUR PIN INCORRECT").Build());
                     return false;
@@ -356,13 +338,12 @@ namespace Robot.Serveur
                     reader.client.Send(new SocketReply(SocketType.SERVOCONTROL, true).AddErrorMessage("ERREUR PIN INCORRECT").Build());
                     return false;
                 }
-                LED led = elements[id] as LED;
-                if (led == null)
+                if (!(elements[id] is LED led))
                 {
                     reader.client.Send(new SocketReply(SocketType.SERVOCONTROL, true).AddErrorMessage("ERREUR PIN INCORRECT").Build());
                     return false;
                 }
-                if (r < 0 || r > 255 || b < 0 || b > 255 || g < 0 || g > 255 || a <0 || a > 255 )
+                if (r < 0 || r > 255 || b < 0 || b > 255 || g < 0 || g > 255 || a < 0 || a > 255)
                 {
                     reader.client.Send(new SocketReply(SocketType.ERROR, true).AddErrorMessage("position non valide").Build());
                     return false;
@@ -394,7 +375,7 @@ namespace Robot.Serveur
             try
             {
                 JObject obj = (JObject)reader.socketRequest["element"];
-                UpdatableElement e;
+                IUpdatableElement e;
                 switch ((string)reader.socketRequest["data"])
                 {
                     case "element":
@@ -415,7 +396,7 @@ namespace Robot.Serveur
                     default:
                         return false;
                 }
-                UpdatableElement laste = e.GetLastInstance();
+                IUpdatableElement laste = e.GetLastInstance();
                 if (laste != null)
                 {
                     laste.Stop();
@@ -452,7 +433,7 @@ namespace Robot.Serveur
             try
             {
 
-                UpdatableElement e;
+                IUpdatableElement e;
                 switch ((string)reader.socketRequest["data"])
                 {
                     case "element":
@@ -460,7 +441,7 @@ namespace Robot.Serveur
                         {
                             return false;
                         }
-                        e = Element.CreateInstanceOf((ElementType) Enum.Parse(typeof(ElementType), (string) reader.socketRequest["elementType"]));
+                        e = Element.CreateInstanceOf((ElementType)Enum.Parse(typeof(ElementType), (string)reader.socketRequest["elementType"]));
                         break;
                     case "sheet":
                         e = new Sheet(Guid.NewGuid().ToString(), "No name", new Dictionary<string, AbstractAction>(), new Dictionary<string, object>(), new Liaison[0]);
@@ -487,7 +468,7 @@ namespace Robot.Serveur
         }
     }
 
-    public class ExecutorGETList: SocketReplyExecutor
+    public class ExecutorGETList : SocketReplyExecutor
     {
 
         public ExecutorGETList(SocketReader reader) : base(reader)
@@ -503,25 +484,25 @@ namespace Robot.Serveur
         public override bool Execute()
         {
             string Type = (string)reader.socketRequest["data"];
-            SocketReply reply = new SocketReply(SocketType.GETLIST, false).AddKeyValue("data", Type); 
-                switch (Type)
-                {
-                    case "element":
-                       reply.AddContent(ArduinoCommand.robot.GetElementsNames());
-                       reader.client.Send(new SocketReply(SocketType.ELEMENTSINFO, false).AddContent(ArduinoCommand.robot.GetElementsInfo()).Build());
+            SocketReply reply = new SocketReply(SocketType.GETLIST, false).AddKeyValue("data", Type);
+            switch (Type)
+            {
+                case "element":
+                    reply.AddContent(ArduinoCommand.robot.GetElementsNames());
+                    reader.client.Send(new SocketReply(SocketType.ELEMENTSINFO, false).AddContent(ArduinoCommand.robot.GetElementsInfo()).Build());
                     break;
-                    case "sheet":
+                case "sheet":
                     reply.AddContent(ArduinoCommand.robot.GetAnimationsNames());
                     break;
-                    case "arduino":
+                case "arduino":
                     reply.AddContent(ArduinoCommand.robot.GetArduinoNames());
                     break;
-                    case "chat":
+                case "chat":
                     reply.AddContent(ArduinoCommand.robot.GetChatNames());
                     break;
                 default:
-                        return false;
-                }
+                    return false;
+            }
             reader.client.Send(reply.Build());
             return true;
         }
@@ -543,7 +524,7 @@ namespace Robot.Serveur
         public override bool Execute()
         {
             string Type = (string)reader.socketRequest["data"];
-            string id = (string) reader.socketRequest["id"];
+            string id = (string)reader.socketRequest["id"];
             SocketReply reply = new SocketReply(SocketType.GET, false).AddKeyValue("data", Type);
             switch (Type)
             {
@@ -665,7 +646,8 @@ namespace Robot.Serveur
             {
                 reader.client.Send(new SocketReply(SocketType.IACHATEXECUTE, true).AddErrorMessage("Action effectuer avec succès").Build());
                 return true;
-            } else
+            }
+            else
             {
                 reader.client.Send(new SocketReply(SocketType.IACHATEXECUTE, true).AddErrorMessage("L'action n'existe pas").Build());
                 return true;

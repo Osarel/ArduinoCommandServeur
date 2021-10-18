@@ -1,6 +1,6 @@
 ﻿namespace Robot
 {
-    public class RobotOption : UpdatableElement
+    public class RobotOption : IUpdatableElement
     {
         public string name = "[Saisir ici le nom]";
         public string langue = "FR-fr";
@@ -21,7 +21,7 @@
             return true;
         }
 
-        public UpdatableElement GetLastInstance()
+        public IUpdatableElement GetLastInstance()
         {
             return ArduinoCommand.robot.Option;
         }

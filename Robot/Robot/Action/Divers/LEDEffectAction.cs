@@ -11,7 +11,7 @@ namespace Robot.Action
         [JsonProperty]
         [JsonConverter(typeof(StringEnumConverter))]
         private readonly LEDEffectType LEDEffectType;
-        [JsonProperty]  
+        [JsonProperty]
         private readonly Color BaseColor;
         [JsonProperty]
         private readonly string Element;
@@ -31,10 +31,9 @@ namespace Robot.Action
 
         protected override void Launch(Sheet sheet, Liaison caller)
         {
-            LED element = ArduinoCommand.robot.GetElementByUUID(Element) as LED;
-            if (element == null)
+            if (!(ArduinoCommand.robot.GetElementByUUID(Element) is LED element))
             {
-                return; 
+                return;
             }
             switch (LEDEffectType)
             {
@@ -57,7 +56,7 @@ namespace Robot.Action
             led.SendColorToAll(new Color(0, 0, 0));
             Thread.Sleep(50);
             int LoopNumber = 0;
-            while (Running && (Timeout > 0 &&  DateTimeOffset.Now.ToUnixTimeMilliseconds() - started < Timeout) )
+            while (Running && (Timeout > 0 && DateTimeOffset.Now.ToUnixTimeMilliseconds() - started < Timeout))
             {
                 LoopNumber++;
                 if (LoopNumber > led.NombreLED)
@@ -78,7 +77,7 @@ namespace Robot.Action
                 }
                 Thread.Sleep(Speed);
             }
-           
+
         }
     }
 

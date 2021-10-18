@@ -21,7 +21,7 @@ namespace Robot
     [JsonObject(MemberSerialization.OptIn)]
     [JsonConverter(typeof(ElementConverter))]
 
-    public abstract class Element : UpdatableElement
+    public abstract class Element : IUpdatableElement
     {
         [JsonProperty]
         public string Name { get; set; }
@@ -89,17 +89,13 @@ namespace Robot
 
         public static Element CreateInstanceOf(ElementType v)
         {
-            switch (v)
+            return v switch
             {
-                case ElementType.LED:
-                    return new LED(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", 10, 150);
-                case ElementType.PIN:
-                    return new PIN(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", PINType.DIGITAL_OUTPUT);
-                case ElementType.SERVOMOTOR:
-                    return new ServoMotor(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", 0, 180, 90, 2000, 1000);
-                default:
-                    return null;
-            }
+                ElementType.LED => new LED(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", 10, 150),
+                ElementType.PIN => new PIN(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", PINType.DIGITAL_OUTPUT),
+                ElementType.SERVOMOTOR => new ServoMotor(Guid.NewGuid().ToString(), "No name", 0, "NONE", "no arduino", 0, 180, 90, 2000, 1000),
+                _ => null,
+            };
         }
 
         public bool Stop()
@@ -120,7 +116,7 @@ namespace Robot
             return true;
         }
 
-        public UpdatableElement GetLastInstance()
+        public IUpdatableElement GetLastInstance()
         {
             return ArduinoCommand.robot.GetElementByUUID(ID);
         }

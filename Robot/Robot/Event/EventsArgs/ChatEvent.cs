@@ -3,7 +3,7 @@ namespace Robot.Event.Args
 {
     public class SpeakingStartEvent : EventArgs
     {
-        public string Phrase { get; } 
+        public string Phrase { get; }
 
         public SpeakingStartEvent(string Phrase)
         {
@@ -13,11 +13,11 @@ namespace Robot.Event.Args
 
     public class SpeakingStopEvent : EventArgs
     {
-        public string Phrase { get; }
+        public string File { get; }
 
         public SpeakingStopEvent(string file)
         {
-            this.Phrase = Phrase;
+            this.File = file;
         }
     }
     public class UserChatEvent : EventArgs

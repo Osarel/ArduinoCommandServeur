@@ -1,8 +1,8 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 using Robot.Action;
+using System;
 
 namespace Robot
 {
@@ -56,6 +56,8 @@ namespace Robot
                     return JsonConvert.DeserializeObject<TalkAction>(jo.ToString(), SpecifiedSubclassConversion);
                 case ActionType.WAIT:
                     return JsonConvert.DeserializeObject<WaitAction>(jo.ToString(), SpecifiedSubclassConversion);
+                default:
+                    break;
             }
             throw new NotImplementedException();
         }

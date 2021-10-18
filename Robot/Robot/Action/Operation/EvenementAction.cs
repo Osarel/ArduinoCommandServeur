@@ -36,7 +36,7 @@ namespace Robot.Action
                     CallOutput(sheet); //E
                 }
                 string observatorID = Guid.NewGuid().ToString();
-                EventHandler<Event.Args.ElementActualValueChanged> handler =  (sender, e) => Element_ActualValueChangedHandler(sender, e, sheet, observatorID);
+                void handler(object sender, Event.Args.ElementActualValueChanged e) => Element_ActualValueChangedHandler(sender, e, sheet, observatorID);
                 element.ActualValueChangedHandler += handler;
                 ObservatorList.Add(observatorID, handler);
             }
@@ -69,7 +69,7 @@ namespace Robot.Action
             sheet.currentAction.Add(ID);
             Thread thread = new Thread(() =>
             {
- 
+
                 Launch(sheet, caller);
             }
             );

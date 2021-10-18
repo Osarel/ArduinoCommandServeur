@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Robot
+﻿namespace Robot
 {
     public class Color
     {
-        public static Color BLACK = new Color(0,0,0);
+        public static Color BLACK = new Color(0, 0, 0);
         public static Color RED = new Color(255, 0, 0);
         public static Color GREEN = new Color(0, 255, 0);
         public static Color BLUE = new Color(0, 0, 255);

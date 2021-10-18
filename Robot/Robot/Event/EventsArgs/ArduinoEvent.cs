@@ -3,7 +3,7 @@ namespace Robot.Event.Args
 {
     public class ArduinoConnect : EventArgs
     {
-        public Arduino Arduino { get; } 
+        public Arduino Arduino { get; }
 
         public ArduinoConnect(Arduino Arduino)
         {

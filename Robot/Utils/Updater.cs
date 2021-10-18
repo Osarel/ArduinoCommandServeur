@@ -2,9 +2,6 @@
 using Onova.Exceptions;
 using Onova.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Robot
@@ -16,7 +13,7 @@ namespace Robot
             new ZipPackageExtractor());
 
 
-        private Version? _updateVersion;
+        private Version _updateVersion;
         private bool _updatePrepared;
         private bool _updaterLaunched;
 
@@ -24,7 +21,7 @@ namespace Robot
         {
         }
 
-        public async Task<Version?> CheckForUpdatesAsync()
+        public async Task<Version> CheckForUpdatesAsync()
         {
             if (!ArduinoCommand.robot.Option.autoUpdate)
                 return null;

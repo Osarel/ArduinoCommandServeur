@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Robot.Action
 {
@@ -24,11 +22,11 @@ namespace Robot.Action
             public int X;
             public int Y;
 
-            public PointPosition(int x, int y){
+            public PointPosition(int x, int y)
+            {
                 X = x;
                 Y = y;
             }
-        }    
+        }
     }
 }
- 

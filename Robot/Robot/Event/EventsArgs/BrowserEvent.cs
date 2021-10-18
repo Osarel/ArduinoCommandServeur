@@ -4,7 +4,7 @@ namespace Robot.Event.Args
 {
     public class BrowserConnectEvent : EventArgs
     {
-        public IWebSocketConnection Connection { get; } 
+        public IWebSocketConnection Connection { get; }
 
         public BrowserConnectEvent(IWebSocketConnection Connection)
         {

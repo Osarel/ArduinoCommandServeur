@@ -30,7 +30,8 @@ namespace Robot.Action
             base.CallOutput(sheet, Output[ConditionCheck(sheet) ? 0 : 1]);
         }
 
-        private bool ConditionCheck(Sheet sheet){
+        private bool ConditionCheck(Sheet sheet)
+        {
             double value = 0;
             string[] conditionParse = Condition.Split(" ");
             if (conditionParse.Length != 3)
@@ -62,30 +63,23 @@ namespace Robot.Action
                     return true;
                 }
                 //TODO 
-                value =(double) sheet.GetVariable(conditionParse[0]);
+                value = (double)sheet.GetVariable(conditionParse[0]);
             }
             return MadeCondition(value, at, conditionParse[1]);
         }
 
         private bool MadeCondition(double value, double at, string condition)
         {
-            switch (condition)
+            return condition switch
             {
-                case "==":
-                    return value == at;
-                case ">=":
-                    return value >= at;
-                case "<=":
-                    return value <= at;
-                case ">":
-                    return value > at;
-                case "<":
-                    return value < at;
-                case "!=":
-                    return value != at;
-                default:
-                    return true;
-            }
+                "==" => value == at,
+                ">=" => value >= at,
+                "<=" => value <= at,
+                ">" => value > at,
+                "<" => value < at,
+                "!=" => value != at,
+                _ => true,
+            };
         }
 
     }

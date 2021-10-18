@@ -43,7 +43,8 @@ namespace Robot.Action
                         sheet.SetVariable(To, sheet.ReadFloat(Base) % sheet.ReadFloat(Add));
                         break;
                 }
-            } catch
+            }
+            catch
             {
 
             }

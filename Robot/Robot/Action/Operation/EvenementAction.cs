@@ -61,7 +61,7 @@ namespace Robot.Action
             {
                 return null;
             }
-            if (ArduinoCommand.robot.Option.debug)
+            if (ArduinoCommand.robot.Options.debug)
             {
                 Console.WriteLine("Déclanchement de : " + Type);
             }

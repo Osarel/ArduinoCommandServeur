@@ -18,14 +18,14 @@ namespace Robot
 
         public IDictionary<string, Sheet> Animations { get; private set; }
         public IDictionary<string, ChatIA> Chat { get; private set; }
-        public RobotOption Option { get; set; }
+        public RobotOption Options { get; set; }
 
         public RobotMain()
         {
             Elements = new Dictionary<string, Element>();
             Arduinos = new Dictionary<string, Arduino>();
             Animations = new Dictionary<string, Sheet>();
-            Option = new RobotOption();
+            Options = new RobotOption();
             Chat = new Dictionary<string, ChatIA>();
         }
 
@@ -292,11 +292,11 @@ namespace Robot
                 using StreamReader file = File.OpenText(filePath);
                 JsonSerializer serializer = new JsonSerializer();
                 Console.WriteLine("Dossier trouver en cours de  récuperation.");
-                Option = (RobotOption)serializer.Deserialize(file, typeof(RobotOption));
+                Options = (RobotOption)serializer.Deserialize(file, typeof(RobotOption));
                 return;
             }
             Console.WriteLine("Dossier introuvable creation d'une nouvelle configuration.");
-            Option = new RobotOption();
+            Options = new RobotOption();
         }
 
         public void SaveConfig()
@@ -304,7 +304,7 @@ namespace Robot
             string filePath = Directory.GetCurrentDirectory() + "/config.json";
             using StreamWriter file = File.CreateText(filePath);
             JsonSerializer serializer = new JsonSerializer();
-            serializer.Serialize(file, Option);
+            serializer.Serialize(file, Options);
         }
 
         public void SaveChat()
@@ -348,9 +348,9 @@ namespace Robot
             {
                 entry.Value.InitialiseElement();
             }
-            if (Option.startingAnimator != null)
+            if (Options.startingAnimator != null)
             {
-                Sheet e = ArduinoCommand.robot.GetAnimations()[Option.startingAnimator];
+                Sheet e = ArduinoCommand.robot.GetAnimations()[Options.startingAnimator];
                 if (e != null)
                 {
                     e.StartSheet(null);

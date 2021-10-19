@@ -45,7 +45,7 @@ namespace Robot.Action
             {
                 return null;
             }
-            if (ArduinoCommand.robot.Option.debug)
+            if (ArduinoCommand.robot.Options.debug)
             {
                 Console.WriteLine("Déclanchement de : " + Type);
             }
@@ -88,7 +88,7 @@ namespace Robot.Action
             }
             Running = false;
             sheet.currentAction.Remove(ID);
-            if (ArduinoCommand.robot.Option.debug)
+            if (ArduinoCommand.robot.Options.debug)
             {
                 Console.WriteLine("Arret de : " + Type);
             }

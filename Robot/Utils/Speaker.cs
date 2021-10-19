@@ -21,7 +21,7 @@ namespace Robot
         public static void Say(string message)
         {
             ArduinoCommand.eventG.FireSpeakingStartEvent(message);
-            if (ArduinoCommand.robot.Option.debug)
+            if (ArduinoCommand.robot.Options.debug)
             {
                 Console.WriteLine("Parole : {0}", message);
             }
@@ -31,7 +31,7 @@ namespace Robot
                 return;
             }
 
-            switch (ArduinoCommand.robot.Option.voiceService)
+            switch (ArduinoCommand.robot.Options.voiceService)
             {
                 case "Microsoft":
                     SayWithMicrosoftRecognition(message);
@@ -48,9 +48,9 @@ namespace Robot
 
         public static async void SayWithMicrosoftRecognition(string message)
         {
-            SpeechConfig config = SpeechConfig.FromSubscription(ArduinoCommand.robot.Option.voiceSubscriptionKey, ArduinoCommand.robot.Option.voiceSubscriptionRegion);
-            config.SpeechSynthesisVoiceName = ArduinoCommand.robot.Option.voice;
-            config.SpeechSynthesisLanguage = ArduinoCommand.robot.Option.langue;
+            SpeechConfig config = SpeechConfig.FromSubscription(ArduinoCommand.robot.Options.voiceSubscriptionKey, ArduinoCommand.robot.Options.voiceSubscriptionRegion);
+            config.SpeechSynthesisVoiceName = ArduinoCommand.robot.Options.voice;
+            config.SpeechSynthesisLanguage = ArduinoCommand.robot.Options.langue;
             Guid id = Guid.NewGuid();
             var fileName = "cache/vocal/" + id.ToString() + ".wav";
             using (var fileOutput = Microsoft.CognitiveServices.Speech.Audio.AudioConfig.FromWavFileOutput(fileName))
@@ -94,8 +94,8 @@ namespace Robot
             // Build the voice request.
             var voiceSelection = new VoiceSelectionParams
             {
-                LanguageCode = ArduinoCommand.robot.Option.langue,
-                SsmlGender = (SsmlVoiceGender)Enum.Parse(typeof(SsmlVoiceGender), ArduinoCommand.robot.Option.genre)
+                LanguageCode = ArduinoCommand.robot.Options.langue,
+                SsmlGender = (SsmlVoiceGender)Enum.Parse(typeof(SsmlVoiceGender), ArduinoCommand.robot.Options.genre)
             };
 
             // Specify the type of audio file.

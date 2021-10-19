@@ -1,27 +1,33 @@
-﻿using Robot.Event;
+﻿using Microsoft.Extensions.Logging;
+using Robot;
+using Robot.Event;
 using Robot.Serveur;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Threading;
-namespace Robot
-{
 
     class ArduinoCommand
     {
         public static RobotMain robot;
         public static SocketServer server;
         public static GlobalEvent eventG;
+        public static ConsoleLoggerProvider loggerProvider;
+        public static ILogger log;
         public static bool demande_arret = false;
         public static bool demande_restart = false;
         private static readonly UpdateService _updateService = new UpdateService();
 
         static void Main(string[] args)
         {
-            Console.BackgroundColor = ConsoleColor.Blue;
+            //Définition du style console
+            Console.BackgroundColor = ConsoleColor.Black;
             Console.Clear();
-            ConsoleLoggerProvider.LoggerCreate();
+            loggerProvider = new ConsoleLoggerProvider();
+            loggerProvider.CreateLogger("Général");
+
+            //Event de fermeture de la console
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
             //GESTION DES EVENTS
@@ -109,7 +115,7 @@ namespace Robot
                new Web.WebServeurHandler();
            });
             webThread.Start();
-            if (robot.Option.autoStart)
+            if (robot.Options.autoStart)
             {
                 robot.StartRobot();
             }
@@ -170,6 +176,3 @@ namespace Robot
             Speaker.LoadVocalCache();
         }
     }
-
-
-}

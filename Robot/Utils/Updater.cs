@@ -23,7 +23,7 @@ namespace Robot
 
         public async Task<Version> CheckForUpdatesAsync()
         {
-            if (!ArduinoCommand.robot.Option.autoUpdate)
+            if (!ArduinoCommand.robot.Options.autoUpdate)
                 return null;
             var check = await _updateManager.CheckForUpdatesAsync();
             return check.CanUpdate ? check.LastVersion : null;
@@ -31,7 +31,7 @@ namespace Robot
 
         public async Task PrepareUpdateAsync(Version version)
         {
-            if (!ArduinoCommand.robot.Option.autoUpdate)
+            if (!ArduinoCommand.robot.Options.autoUpdate)
                 return;
 
             try
@@ -51,7 +51,7 @@ namespace Robot
 
         public void FinalizeUpdate(bool needRestart)
         {
-            if (!ArduinoCommand.robot.Option.autoUpdate)
+            if (!ArduinoCommand.robot.Options.autoUpdate)
                 return;
 
             if (_updateVersion == null || !_updatePrepared || _updaterLaunched)

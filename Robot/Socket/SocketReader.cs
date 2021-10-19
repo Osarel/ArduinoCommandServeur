@@ -541,7 +541,7 @@ namespace Robot.Serveur
                     reply.AddContent(ArduinoCommand.robot.Chat[id]);
                     break;
                 case "config":
-                    reply.AddContent(ArduinoCommand.robot.Option);
+                    reply.AddContent(ArduinoCommand.robot.Options);
                     break;
                 default:
                     return false;

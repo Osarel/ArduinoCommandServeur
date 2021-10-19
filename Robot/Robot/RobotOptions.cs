@@ -17,13 +17,13 @@
         public bool debug = false;
         public bool AddToList()
         {
-            ArduinoCommand.robot.Option = this;
+            ArduinoCommand.robot.Options = this;
             return true;
         }
 
         public IUpdatableElement GetLastInstance()
         {
-            return ArduinoCommand.robot.Option;
+            return ArduinoCommand.robot.Options;
         }
 
         public bool Save()

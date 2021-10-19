@@ -18,7 +18,7 @@
     <Authors>Raphaël Carvalho</Authors>
     <Company>craphael.fr</Company>
     <Copyright>Raphaël Carvalho</Copyright>
-    <StartupObject>Robot.ArduinoCommand</StartupObject>
+    <StartupObject>ArduinoCommand</StartupObject>
     <AssemblyVersion>1.1.2</AssemblyVersion>
     <FileVersion>1.1.2</FileVersion>
     <PackageLicenseFile>LICENCE</PackageLicenseFile>

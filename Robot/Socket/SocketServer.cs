@@ -1,4 +1,5 @@
 ﻿using Fleck;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 
@@ -38,24 +39,26 @@ namespace Robot.Serveur
     {
         private static readonly string authentificationPremadeRequest = new SocketReply(SocketType.AUTHENTIFICATIONREQUEST, false).Build();
         private static readonly string errorPremade = new SocketReply(SocketType.ERROR, true).AddErrorMessage("Erreur dans la formulation de la demande").Build();
+        public static ILogger log = ArduinoCommand.loggerProvider.CreateLogger("Websocket");
         public readonly WebSocketServer server;
         public IDictionary<IWebSocketConnection, bool> connected = new Dictionary<IWebSocketConnection, bool>();
 
         public SocketServer(int port)
         {
+
             server = new WebSocketServer("ws://0.0.0.0:" + port);
             server.Start(socket =>
             {
                 socket.OnOpen = () =>
                 {
-                    Console.WriteLine("Connexion ouverte avec " + socket.ConnectionInfo.ClientIpAddress);
+                    log.LogInformation("Connexion ouverte avec {0}", socket.ConnectionInfo.ClientIpAddress);
                     connected[socket] = false;
                     _ = socket.Send(authentificationPremadeRequest);
                     ArduinoCommand.eventG.FireBrowserConnectEvent(socket);
                 };
                 socket.OnClose = () =>
                 {
-                    Console.WriteLine("Close connexion with web user!");
+                    log.LogInformation("Connexion interrompu avec {0}", socket.ConnectionInfo.ClientIpAddress);
                     ArduinoCommand.eventG.FireBrowserDisconnectEvent(socket);
                     connected.Remove(socket);
                 };

@@ -1,5 +1,6 @@
 ﻿using Google.Cloud.TextToSpeech.V1;
 using Microsoft.CognitiveServices.Speech;
+using Microsoft.Extensions.Logging;
 using NAudio.Wave;
 using Newtonsoft.Json;
 using System;
@@ -14,6 +15,7 @@ namespace Robot
     public class Speaker
     {
         public static IDictionary<string, string> cache = new Dictionary<string, string>();
+        public static ILogger log = ArduinoCommand.loggerProvider.CreateLogger("Voix");
         public Speaker()
         {
         }
@@ -21,10 +23,7 @@ namespace Robot
         public static void Say(string message)
         {
             ArduinoCommand.eventG.FireSpeakingStartEvent(message);
-            if (ArduinoCommand.robot.Options.debug)
-            {
-                Console.WriteLine("Parole : {0}", message);
-            }
+            log.LogInformation("Parole : {0}", message);
             if (cache.TryGetValue(message, out string idCache))
             {
                 PlayAudio(new StringBuilder("cache/vocal/").Append(idCache.ToString()).Append(".wav").ToString());
@@ -62,19 +61,19 @@ namespace Robot
                 if (result.Reason == ResultReason.SynthesizingAudioCompleted)
                 {
                     cache[text] = id.ToString();
-                    Console.WriteLine($"Parole synthétisé sur [{fileName}] pour le texte [{text}]");
+                    log.LogDebug($"Parole synthétisé sur [{fileName}] pour le texte [{text}]");
                     SaveVocalCache();
                 }
                 else if (result.Reason == ResultReason.Canceled)
                 {
                     var cancellation = SpeechSynthesisCancellationDetails.FromResult(result);
-                    Console.WriteLine($"CANCELED: Reason={cancellation.Reason}");
+                    log.LogError($"CANCELED: Reason={cancellation.Reason}");
 
                     if (cancellation.Reason == CancellationReason.Error)
                     {
-                        Console.WriteLine($"CANCELED: ErrorCode={cancellation.ErrorCode}");
-                        Console.WriteLine($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
-                        Console.WriteLine($"CANCELED: Did you update the subscription info?");
+                        log.LogError($"CANCELED: ErrorCode={cancellation.ErrorCode}");
+                        log.LogError($"CANCELED: ErrorDetails=[{cancellation.ErrorDetails}]");
+                        log.LogError($"CANCELED: Did you update the subscription info?");
                     }
                 }
             }
@@ -116,7 +115,7 @@ namespace Robot
             }
             cache[message] = id.ToString();
             SaveVocalCache();
-            Console.WriteLine($"Parole synthétisé sur [{fileName}] pour le texte  [{message}]");
+            log.LogDebug($"Parole synthétisé sur [{fileName}] pour le texte  [{message}]");
             PlayAudio(fileName);
         }
 
@@ -137,13 +136,13 @@ namespace Robot
 
         public static void LoadVocalCache()
         {
-            Console.WriteLine("Chargement des fichiers vocaux ..");
+            log.LogInformation("Chargement des fichiers vocaux ..");
             string filePath = Directory.GetCurrentDirectory() + "/cache/vocal/vocal.json";
             if (File.Exists(filePath))
             {
                 using StreamReader file = File.OpenText(filePath);
                 JsonSerializer serializer = new JsonSerializer();
-                Console.WriteLine("Dossier trouver en cours de  récuperation.");
+                log.LogInformation("Dossier trouver en cours de  récuperation.");
                 cache = (Dictionary<string, string>)serializer.Deserialize(file, typeof(Dictionary<string, string>));
             }
         }

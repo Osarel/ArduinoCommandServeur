@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -21,6 +22,7 @@ namespace Robot.Action
         [JsonProperty]
         public Liaison[] startupPoint;
 
+        public ILogger log;
         [JsonConstructor]
         public Sheet(string ID, string Name, Dictionary<string, AbstractAction> action, Dictionary<string, object> variable, Liaison[] startupPoint)
         {
@@ -30,6 +32,7 @@ namespace Robot.Action
             this.variable = variable;
             this.startupPoint = startupPoint;
             currentAction = new List<string>();
+            log = ArduinoCommand.loggerProvider.CreateLogger(Name);
         }
 
         public void StartAnimations(Liaison value)
@@ -52,7 +55,7 @@ namespace Robot.Action
             {
                 this.variable = variable;
             }
-            Console.WriteLine("Démarrage de l'animation : " + Name);
+            log.LogInformation("Démarrage de l'animation : " + Name);
             foreach (Liaison value in startupPoint)
             {
                 Thread thread = new Thread(() =>

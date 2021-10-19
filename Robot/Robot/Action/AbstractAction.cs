@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System;
 using System.Threading;
@@ -47,7 +48,7 @@ namespace Robot.Action
             }
             if (ArduinoCommand.robot.Options.debug)
             {
-                Console.WriteLine("Déclanchement de : " + Type);
+                sheet.log.LogDebug("Déclanchement de : " + Type);
             }
             Running = true;
             sheet.currentAction.Add(ID);
@@ -90,7 +91,7 @@ namespace Robot.Action
             sheet.currentAction.Remove(ID);
             if (ArduinoCommand.robot.Options.debug)
             {
-                Console.WriteLine("Arret de : " + Type);
+                sheet.log.LogDebug("Arret de : " + Type);
             }
             ArduinoCommand.eventG.FireActionFinishEvent(sheet, this);
         }

@@ -1,4 +1,5 @@
 ﻿using Fleck;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Robot.Action;
@@ -122,7 +123,7 @@ namespace Robot.Serveur
             {
                 //Echec envoie d'un socket ne confirmant pas la connexion
                 //et deconnexion
-                Console.WriteLine("Deconnexion de l'utilisateur car token incorect");
+                SocketServer.log.LogWarning("Deconnexion de l'utilisateur {0} car token incorect", reader.client.ConnectionInfo.ClientIpAddress);
                 reader.client.Send(new SocketReply(SocketType.ERROR, true).AddErrorMessage("Identifiant incorrect").Build());
                 reader.client.Close();
             }
@@ -227,7 +228,7 @@ namespace Robot.Serveur
         public override bool Execute()
         {
             ArduinoCommand.demande_restart = true;
-            Console.WriteLine("Demande restart");
+            SocketServer.log.LogDebug("Demande restart web");
             reader.client.Send(new SocketReply(SocketType.RESTART, false).Build());
             return true;
         }
@@ -299,7 +300,7 @@ namespace Robot.Serveur
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                SocketServer.log.LogDebug(e.Message);
             }
             return true;
         }
@@ -352,7 +353,7 @@ namespace Robot.Serveur
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                SocketServer.log.LogDebug(e.Message);
             }
             return true;
         }
@@ -408,7 +409,7 @@ namespace Robot.Serveur
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                SocketServer.log.LogDebug(e.Message);
                 reader.client.Send(new SocketReply(SocketType.ERROR, true).AddErrorMessage("Erreur dans la lecture").Build());
                 return false;
             }
@@ -461,7 +462,7 @@ namespace Robot.Serveur
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                SocketServer.log.LogDebug(e.Message);
                 reader.client.Send(new SocketReply(SocketType.ERROR, true).AddErrorMessage("Erreur dans la lecture").Build());
                 return false;
             }

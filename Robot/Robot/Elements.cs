@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Robot.Event;
 using System;
@@ -59,7 +60,7 @@ namespace Robot
             {
                 if (!ArduinoCommand.robot.Arduinos.ContainsKey(RequestArduino))
                 {
-                    Console.WriteLine("erreur selection arduino" + RequestArduino + " : " + ID);
+                    ArduinoCommand.log.LogError("erreur selection arduino {0} : {1}", RequestArduino, ID);
                     return null;
                 }
                 arduino = ArduinoCommand.robot.Arduinos[RequestArduino];
@@ -222,7 +223,7 @@ namespace Robot
             string commande = new StringBuilder("rob://a/").Append(PIN).Append("/").Append(position).Append("/").ToString();
             if (!GetArduino().Write(commande))
             {
-                Console.WriteLine("Echec de l'envoie de la commande à l'arduino");
+                ArduinoCommand.log.LogDebug("Echec de l'envoie de la commande à l'arduino");
             }
             SetActualValue(value);
             Active = true;

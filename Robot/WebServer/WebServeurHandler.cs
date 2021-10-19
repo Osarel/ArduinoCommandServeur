@@ -1,4 +1,5 @@
 ﻿using EmbedIO;
+using Microsoft.Extensions.Logging;
 using Swan.Logging;
 using System;
 using System.IO;
@@ -7,7 +8,7 @@ namespace Web
 {
     public class WebServeurHandler
     {
-
+        private static Microsoft.Extensions.Logging.ILogger log = ArduinoCommand.loggerProvider.CreateLogger("Web");
         public WebServeurHandler()
         {
             Logger.UnregisterLogger<ConsoleLogger>();
@@ -28,7 +29,7 @@ namespace Web
                 .WithLocalSessionManager()
                 .WithStaticFolder("/", Directory.GetCurrentDirectory() + "\\Data\\Website", true);
             // Listen for state changes.
-            server.StateChanged += (s, e) => { Console.WriteLine("Etat du serveur web : " + e.NewState); };
+            server.StateChanged += (s, e) => { log.LogDebug("Etat du serveur web : " + e.NewState); };
 
             return server;
         }

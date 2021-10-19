@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -33,7 +34,7 @@ namespace Robot.Action
             {
                 if (ArduinoCommand.robot.Options.debug)
                 {
-                    Console.WriteLine("Passage de la convergence");
+                    sheet.log.LogDebug("Passage de la convergence");
                 }
                 Finish[ID] = 0;
                 base.CallOutput(sheet);

@@ -22,11 +22,9 @@ using System.Threading;
         static void Main(string[] args)
         {
             //Définition du style console
-            Console.BackgroundColor = ConsoleColor.Black;
-            Console.Clear();
             loggerProvider = new ConsoleLoggerProvider();
-            loggerProvider.CreateLogger("Général");
-
+            log = loggerProvider.CreateLogger("Général");
+            WELCOME();
             //Event de fermeture de la console
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(CurrentDomain_ProcessExit);
 
@@ -41,30 +39,64 @@ using System.Threading;
             }
 
             StopProg();
-
-
         }
 
+
+        public static void WELCOME()
+        {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.Clear();
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Démarrage du programme...\n");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("          ===========================================\n");
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.WriteLine("               _       _             \n" +
+                              "              /\\           | |     (_)            \n" +
+                              "             /  \\   _ __ __| |_   _ _ _ __   ___  \n" +
+                              "            / /\\ \\ | '__/ _` | | | | | '_ \\ / _ \\ \n" +
+                              "           / ____ \\| | | (_| | |_| | | | | | (_) |\n" +
+                              "          /_/    \\_\\_|  \\__,_|\\__,_|_|_| |_|\\___/ \n");
+            Console.WriteLine("            _____                                          _ \n" +
+                              "           / ____|                                        | |\n" +
+                              "          | |     ___  _ __ ___  _ __ ___   __ _ _ __   __| |\n" +
+                              "          | |    / _ \\| '_ ` _ \\| '_ ` _ \\ / _` | '_ \\ / _` |\n" +
+                              "          | |___| (_) | | | | | | | | | | | (_| | | | | (_| |\n" +
+                              "           \\_____\\___/|_| |_| |_|_| |_| |_|\\__,_|_| |_|\\__,_|\n");
+
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine("          ===========================================\n");
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("All right reserved © craphael.fr / MIT Licence\n\n");
+
+            Console.ForegroundColor = ConsoleColor.Gray;
+
+    }
 
         public static async void Update()
         {
             try
             {
                 Assembly a = Assembly.GetExecutingAssembly();
-                Console.WriteLine("Version actuelle : {0}", a.GetName().Version);
-                Console.WriteLine("Recherche d'une mise à jour...");
+                log.LogInformation("Version actuelle : {0}", a.GetName().Version);
+                log.LogInformation("Recherche d'une mise à jour...");
                 // Recherche d'une mise à jour
                 var updateVersion = await _updateService.CheckForUpdatesAsync();
                 if (updateVersion == null)
                     return;
 
-                Console.WriteLine("Une mise à jour est disponible !");
-                // Preparation de la mise à jour
-                Console.WriteLine($"Telechargement de la mise à jour v{updateVersion}...");
+                log.LogWarning("Une mise à jour est disponible !");
+            // Preparation de la mise à jour
+                if (!robot.Options.autoUpdate)
+                {
+                    return;
+                }
+                log.LogWarning($"Telechargement de la mise à jour v{updateVersion}...");
                 await _updateService.PrepareUpdateAsync(updateVersion);
 
-                // Redemarrage du programme -> redemarrage géré par le service de mise à jour ...
-                Console.WriteLine("Redemarrage pour installation");
+            // Redemarrage du programme -> redemarrage géré par le service de mise à jour ...
+                log.LogWarning("Téléchargement terminer.");
+                log.LogWarning("Redemarrage pour installation");
                 _updateService.FinalizeUpdate(true);
 
                 //Arret du programme
@@ -73,20 +105,20 @@ using System.Threading;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
-                Console.WriteLine(e.StackTrace);
-                // Failure to update shouldn't crash the application
-                Console.WriteLine("Echec de la mise à jour");
+            // Echec de la mise à jour
+            log.LogError("Echec de la mise à jour");
+            log.LogError (e.Message);
+            log.LogTrace(e.StackTrace);
             }
         }
 
         public static void StartProg(string[] args)
         {
+            log.LogInformation("Chargement des fichiers robots.");
             //Chargement des fichiers du robot
             Load();
+            log.LogInformation("Chargement des fichiers fini");
             Update();
-            Speaker.Say("Démarrage du robot en cours..");
-            Console.WriteLine("Chargement du fichier fini");
             //Lancement du serveur Websocketg
             Thread robotThread = new Thread(() =>
             {
@@ -99,10 +131,10 @@ using System.Threading;
                         server = new SocketServer(args.Length > 0 ? int.Parse(args[0]) : 8800);
                         started = true;
                     }
-                    catch
+                    catch (Exception e)
                     {
-                        Console.WriteLine("Echec du démarrage port ouvert .. nouvelle essais dans 5 secondes");
-                        Thread.Sleep(5000);
+                        // Echec de la mise à jour
+                        log.LogError("Echec du démarrage du serveur.. nouvelle essais dans 5 secondes");
                     }
                 }
             });
@@ -121,7 +153,7 @@ using System.Threading;
             }
             else
             {
-                Console.WriteLine("Attente démarrage du robot");
+                log.LogInformation("En attente du démarrage robot");
             }
 
             //Déclanchement de l'event start
@@ -131,31 +163,32 @@ using System.Threading;
         {
             if (!demande_arret && !demande_restart)
             {
-                Console.WriteLine("Forcer l'extinction");
+                log.LogWarning("Ordre d'extinction reçu....");
                 StopProg();
             }
         }
 
         public static void StopProg()
         {
+            log.LogWarning("Arrêt du programme..");
             //FIRE EVENT STOP
             eventG.FireRobotStopping();
             //extinction du robot
             robot.StopRobot();
             // Stop the server
-            Console.Write("Arret de la liaison serveur / web...");
+            log.LogInformation("Arret du serveur websocket...");
             server.server.Dispose();
-            Console.WriteLine("liaison arrêté !");
+            log.LogInformation("Serveur websocket arrêté !");
             //Sauvegarde des fichiers du robot
-            Console.WriteLine("Sauvegarde des fichiers du robot");
+            log.LogInformation("Sauvegarde des fichiers du robot");
             Save();
-            Console.WriteLine("Sauvegarde fini");
+            log.LogInformation("Sauvegarde des fichiers du robot terminer");
             if (demande_restart)
             {
                 var fileName = Assembly.GetExecutingAssembly().Location;
                 fileName = fileName.Remove(fileName.Length - 4);
                 fileName += ".exe";
-                Console.Write("Redemarrage en cours !");
+                log.LogError("Redemarrage en cours !");
                 Process.Start(fileName);
             }
             Environment.Exit(0);

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -20,6 +21,7 @@ namespace Robot
         [JsonProperty]
         public int BaudRate { get; set; }
         private SerialPort port;
+        private ILogger log;
 
         public class ThreadActionPin
         {
@@ -51,7 +53,6 @@ namespace Robot
                 PinAction.Add(pin, new List<ThreadActionPin>());
             }
             PinAction[pin].Add(actionpin);
-            Console.WriteLine("a " + PinAction[pin].Count);
         }
         public Arduino(string Name, string ID, string PortName, int BaudRate)
         {
@@ -60,6 +61,7 @@ namespace Robot
             this.Name = Name;
             this.ID = ID;
             this.BaudRate = BaudRate;
+            log = ArduinoCommand.loggerProvider.CreateLogger($"Arduino '{Name}'");
         }
         public static string[] SerialPorts()
         {
@@ -97,7 +99,7 @@ namespace Robot
 
         private void MethodToCall(string valeur)
         {
-            Console.WriteLine(valeur);
+            log.LogDebug("Reception : {0}", valeur);
             try
             {
                 Dictionary<string, object> request = JsonConvert.DeserializeObject<Dictionary<string, object>>(valeur);
@@ -115,7 +117,7 @@ namespace Robot
             }
             catch
             {
-                Console.WriteLine("Erreur reception arduino");
+                log.LogError("Erreur reception arduino");
             }
         }
 
@@ -177,7 +179,7 @@ namespace Robot
             if (Started())
             {
                 //ecriture des données dans l'arduino
-                Console.WriteLine(data);
+                log.LogDebug("Ecriture : {0}", data);
                 port.WriteLine(data + "\n");
                 return true;
             }

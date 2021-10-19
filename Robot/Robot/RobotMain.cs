@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Robot.Action;
 using System;
@@ -19,6 +20,8 @@ namespace Robot
         public IDictionary<string, Sheet> Animations { get; private set; }
         public IDictionary<string, ChatIA> Chat { get; private set; }
         public RobotOption Options { get; set; }
+
+        private ILogger log = ArduinoCommand.log;
 
         public RobotMain()
         {
@@ -153,13 +156,13 @@ namespace Robot
 
         public void LoadAnimations()
         {
-            Console.WriteLine("Chargement des animations ..");
+            log.LogInformation ("Chargement des animations ..");
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/Animations/");
             foreach (string value in files)
             {
                 try
                 {
-                    Console.WriteLine("Animation : " + value);
+                    log.LogDebug("Animation : " + value);
                     using StreamReader file = File.OpenText(value);
                     JsonSerializer serializer = new JsonSerializer();
                     Sheet sheet = (Sheet)serializer.Deserialize(file, typeof(Sheet));
@@ -167,43 +170,43 @@ namespace Robot
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la récuperation de l'animation : " + value);
-                    Console.WriteLine(e.Message);
+                    log.LogWarning("Echec dans la récuperation de l'animation : " + value);
+                    log.LogWarning(e.Message);
                 }
             }
         }
 
         public void SaveAnimations()
         {
-            Console.WriteLine("Sauvegarde des animations ..");
+            log.LogInformation("Sauvegarde des animations ..");
             string folder = Directory.GetCurrentDirectory() + "/Animations/";
             foreach (Sheet value in Animations.Values)
             {
                 try
                 {
                     string filePath = folder + value.ID + ".anim";
-                    Console.WriteLine("Animation save : " + value);
+                    log.LogDebug("Animation save : " + value);
                     using StreamWriter file = File.CreateText(filePath);
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, value);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la sauvegarde de l'animation : " + value);
-                    Console.WriteLine(e.Message);
+                    log.LogWarning("Echec dans la sauvegarde de l'animation : " + value);
+                    log.LogWarning(e.Message);
                 }
             }
         }
 
         public void LoadArduino()
         {
-            Console.WriteLine("Chargement des arduinos ..");
+            log.LogInformation("Chargement des arduinos ..");
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/Arduinos/");
             foreach (string value in files)
             {
                 try
                 {
-                    Console.WriteLine("Arduino : " + value);
+                    log.LogDebug("Arduino : " + value);
                     using StreamReader file = File.OpenText(value);
                     JsonSerializer serializer = new JsonSerializer();
                     Arduino arduino = (Arduino)serializer.Deserialize(file, typeof(Arduino));
@@ -211,43 +214,43 @@ namespace Robot
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la récuperation de l'arduino : " + value);
-                    Console.WriteLine(e.ToString());
+                    log.LogWarning("Echec dans la récuperation de l'arduino : " + value);
+                    log.LogWarning(e.ToString());
                 }
             }
         }
 
         public void SaveArduino()
         {
-            Console.WriteLine("Sauvegarde des arduinos ..");
+            log.LogInformation("Sauvegarde des arduinos ..");
             string folder = Directory.GetCurrentDirectory() + "/Arduinos/";
             foreach (Arduino value in Arduinos.Values)
             {
                 try
                 {
                     string filePath = folder + value.ID + ".ard";
-                    Console.WriteLine("Arduino save : " + value);
+                    log.LogDebug("Arduino save : " + value);
                     using StreamWriter file = File.CreateText(filePath);
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, value);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la sauvegarde de l'animation : " + value);
-                    Console.WriteLine(e.Message);
+                    log.LogWarning("Echec dans la sauvegarde de l'animation : " + value);
+                    log.LogWarning(e.Message);
                 }
             }
         }
 
         public void LoadElements()
         {
-            Console.WriteLine("Chargement des elements ..");
+            log.LogInformation("Chargement des elements ..");
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/Elements/");
             foreach (string value in files)
             {
                 try
                 {
-                    Console.WriteLine("Element : " + value);
+                    log.LogDebug("Element : " + value);
                     using StreamReader file = File.OpenText(value);
                     JsonSerializer serializer = new JsonSerializer();
                     Element element = (Element)serializer.Deserialize(file, typeof(Element));
@@ -255,47 +258,47 @@ namespace Robot
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la récuperation de : " + value);
-                    Console.WriteLine(e.Message);
+                    log.LogWarning("Echec dans la récuperation de : " + value);
+                    log.LogWarning(e.Message);
                 }
             }
         }
 
         public void SaveElements()
         {
-            Console.WriteLine("Sauvegarde des elements ..");
+            log.LogInformation("Sauvegarde des elements ..");
             string folder = Directory.GetCurrentDirectory() + "/Elements/";
             foreach (Element value in Elements.Values)
             {
                 try
                 {
                     string filePath = folder + value.ID + ".elem";
-                    Console.WriteLine("Element save : " + value);
+                    log.LogDebug("Element save : " + value);
                     using StreamWriter file = File.CreateText(filePath);
                     JsonSerializer serializer = new JsonSerializer();
                     serializer.Serialize(file, value);
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Echec dans la sauvegarde de l'element : " + value);
-                    Console.WriteLine(e.Message);
+                    log.LogWarning("Echec dans la sauvegarde de l'element : " + value);
+                    log.LogWarning(e.Message);
                 }
             }
         }
 
         public void LoadConfig()
         {
-            Console.WriteLine("Chargement des fichiers de configurations ..");
+            log.LogInformation("Chargement des fichiers de configurations ..");
             string filePath = Directory.GetCurrentDirectory() + "/config.json";
             if (File.Exists(filePath))
             {
                 using StreamReader file = File.OpenText(filePath);
                 JsonSerializer serializer = new JsonSerializer();
-                Console.WriteLine("Dossier trouver en cours de  récuperation.");
+                log.LogInformation("Dossier trouver en cours de  récuperation.");
                 Options = (RobotOption)serializer.Deserialize(file, typeof(RobotOption));
                 return;
             }
-            Console.WriteLine("Dossier introuvable creation d'une nouvelle configuration.");
+            log.LogWarning("Dossier introuvable creation d'une nouvelle configuration.");
             Options = new RobotOption();
         }
 
@@ -317,13 +320,13 @@ namespace Robot
 
         public void LoadChat()
         {
-            Console.WriteLine("Chargement des fichiers de chat ..");
+            log.LogInformation("Chargement des fichiers de chat ..");
             string filePath = Directory.GetCurrentDirectory() + "/ChatIA.json";
             if (File.Exists(filePath))
             {
                 using StreamReader file = File.OpenText(filePath);
                 JsonSerializer serializer = new JsonSerializer();
-                Console.WriteLine("Dossier trouver en cours de  récuperation.");
+                log.LogInformation("Dossier trouver en cours de  récuperation.");
                 Chat = (Dictionary<string, ChatIA>)serializer.Deserialize(file, typeof(Dictionary<string, ChatIA>));
             }
         }

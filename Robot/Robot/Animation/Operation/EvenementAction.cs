@@ -12,7 +12,7 @@ namespace Robot.Action
     {
         [JsonProperty]
         [JsonConverter(typeof(StringEnumConverter))]
-        public AnimatorConditionType ConditionType;
+        public AnimatorEvenementType ConditionType;
         [JsonProperty]
         public readonly string Element;
         [JsonProperty]
@@ -22,30 +22,44 @@ namespace Robot.Action
 
         public Dictionary<string, EventHandler<Event.Args.ElementActualValueChanged>> ObservatorList = new Dictionary<string, EventHandler<Event.Args.ElementActualValueChanged>>();
         [JsonConstructor]
-        public EvenementAction(AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, false, ID, Position, Output)
+        public EvenementAction(AnimatorEvenementType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, false, ID, Position, Output)
         {
             this.ConditionType = ConditionType;
             this.Condition = Condition;
         }
         protected override void Launch(Sheet sheet, Liaison caller)
         {
-            if (ConditionType == AnimatorConditionType.Capteur)
+            if (ConditionType == AnimatorEvenementType.Capteur)
             {
-                Element element = ArduinoCommand.robot.GetElementByUUID(Element);
-                if (element == null)
-                {
-                    CallOutput(sheet); //E
-                }
-                string observatorID = Guid.NewGuid().ToString();
-                void handler(object sender, Event.Args.ElementActualValueChanged e) => Element_ActualValueChangedHandler(sender, e, sheet, observatorID);
-                element.ActualValueChangedHandler += handler;
-                ObservatorList.Add(observatorID, handler);
+                CapteurEventDetection(sheet);
+            } else if (ConditionType == AnimatorEvenementType.Serveur)
+            {
+                ServeurEventDetection(sheet);
             }
+        }
+
+        private void CapteurEventDetection(Sheet sheet)
+        {
+            Element element = ArduinoCommand.robot.GetElementByUUID(Element);
+            if (element == null)
+            {
+                CallOutput(sheet); //E
+            }
+            string observatorID = Guid.NewGuid().ToString();
+            void handler(object sender, Event.Args.ElementActualValueChanged e) => Element_ActualValueChangedHandler(sender, e, sheet, observatorID);
+            element.ActualValueChangedHandler += handler;
+            ObservatorList.Add(observatorID, handler);
+        }
+
+        private void ServeurEventDetection(Sheet sheet)
+        {
+            //TODO
+            //DETECTION DES EVENT SERVEUR ET ATTENTE DU BON
         }
 
         private void Element_ActualValueChangedHandler(object sender, Event.Args.ElementActualValueChanged e, Sheet sheet, string id)
         {
-            if (MadeCondition(e.NewValue, SecondArgument, Condition))
+            if (Utils.MadeCondition(e.NewValue, SecondArgument, Condition))
             {
                 CallOutput(sheet);
                 Element element = (Element)sender;
@@ -80,31 +94,11 @@ namespace Robot.Action
         }
 
 
-        private bool MadeCondition(double value, double at, string condition)
-        {
-            switch (condition)
-            {
-                case "==":
-                    return value == at;
-                case ">=":
-                    return value >= at;
-                case "<=":
-                    return value <= at;
-                case ">":
-                    return value > at;
-                case "<":
-                    return value < at;
-                case "!=":
-                    return value != at;
-                default:
-                    return false;
-            }
-        }
-
     }
 
     public enum AnimatorEvenementType
     {
         Capteur,
+        Serveur,
     }
 }

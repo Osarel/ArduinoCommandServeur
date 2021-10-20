@@ -4,8 +4,9 @@ using System;
 
 namespace Robot.Action
 {
+
     [JsonObject(MemberSerialization.OptIn)]
-    class ConditionAction : AbstractAction
+    public abstract class ConditionableAction : AbstractAction
     {
         [JsonProperty]
         [JsonConverter(typeof(StringEnumConverter))]
@@ -14,7 +15,7 @@ namespace Robot.Action
         public string Condition;
 
         [JsonConstructor]
-        public ConditionAction(AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, false, ID, Position, Output)
+        public ConditionableAction(ActionType type, AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(type, false, ID, Position, Output)
         {
             this.ConditionType = ConditionType;
             this.Condition = Condition;
@@ -24,13 +25,7 @@ namespace Robot.Action
 
         }
 
-        protected override void CallOutput(Sheet sheet)
-        {
-            //Si condition valide alors sortie 0 sinon sortie 1
-            base.CallOutput(sheet, Output[ConditionCheck(sheet) ? 0 : 1]);
-        }
-
-        private bool ConditionCheck(Sheet sheet)
+        public bool ConditionCheck(Sheet sheet)
         {
             double value = 0;
             string[] conditionParse = Condition.Split(" ");
@@ -65,28 +60,17 @@ namespace Robot.Action
                 //TODO 
                 value = (double)sheet.GetVariable(conditionParse[0]);
             }
-            return MadeCondition(value, at, conditionParse[1]);
+            return Utils.MadeCondition(value, at, conditionParse[1]);
         }
 
-        private bool MadeCondition(double value, double at, string condition)
-        {
-            return condition switch
-            {
-                "==" => value == at,
-                ">=" => value >= at,
-                "<=" => value <= at,
-                ">" => value > at,
-                "<" => value < at,
-                "!=" => value != at,
-                _ => true,
-            };
-        }
+
 
     }
-
     public enum AnimatorConditionType
     {
         Capteur,
         Variable,
     }
+
+
 }

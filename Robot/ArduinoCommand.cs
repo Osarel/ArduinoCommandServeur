@@ -117,7 +117,7 @@ using System.Threading;
             log.LogInformation("Chargement des fichiers robots.");
             //Chargement des fichiers du robot
             Load();
-            log.LogInformation("Chargement des fichiers fini");
+            log.LogInformation("Chargement des fichiers fini.");
             Update();
             //Lancement du serveur Websocketg
             Thread robotThread = new Thread(() =>

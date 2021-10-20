@@ -32,10 +32,6 @@ namespace Robot.Action
             Finish[ID] = Finish[ID] + 1;
             if (Finish[ID] >= Input)
             {
-                if (ArduinoCommand.robot.Options.debug)
-                {
-                    sheet.log.LogDebug("Passage de la convergence");
-                }
                 Finish[ID] = 0;
                 base.CallOutput(sheet);
             }

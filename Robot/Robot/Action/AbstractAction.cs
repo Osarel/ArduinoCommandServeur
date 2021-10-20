@@ -46,10 +46,7 @@ namespace Robot.Action
             {
                 return null;
             }
-            if (ArduinoCommand.robot.Options.debug)
-            {
-                sheet.log.LogDebug("Déclanchement de : " + Type);
-            }
+            sheet.log.LogDebug("Déclanchement de : {0}", Type);
             Running = true;
             sheet.currentAction.Add(ID);
             Routine = new Thread(() =>
@@ -89,10 +86,6 @@ namespace Robot.Action
             }
             Running = false;
             sheet.currentAction.Remove(ID);
-            if (ArduinoCommand.robot.Options.debug)
-            {
-                sheet.log.LogDebug("Arret de : " + Type);
-            }
             ArduinoCommand.eventG.FireActionFinishEvent(sheet, this);
         }
 

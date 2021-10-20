@@ -23,7 +23,7 @@ namespace Robot
         public static void Say(string message)
         {
             ArduinoCommand.eventG.FireSpeakingStartEvent(message);
-            log.LogInformation("Parole : {0}", message);
+            log.LogInformation("Parole : {0}", message.Replace("\n", ""));
             if (cache.TryGetValue(message, out string idCache))
             {
                 PlayAudio(new StringBuilder("cache/vocal/").Append(idCache.ToString()).Append(".wav").ToString());

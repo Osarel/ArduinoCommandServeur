@@ -44,7 +44,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Data\Website\" />
     <Folder Include="Socket\" />
     <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>

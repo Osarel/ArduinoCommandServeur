@@ -140,13 +140,6 @@ using System.Threading;
             });
             robotThread.Start();
 
-            //Demarrage du serveur WEB
-            Thread webThread = new Thread(() =>
-           {
-               Thread.CurrentThread.IsBackground = true;
-               new Web.WebServeurHandler();
-           });
-            webThread.Start();
             if (robot.Options.autoStart)
             {
                 robot.StartRobot();

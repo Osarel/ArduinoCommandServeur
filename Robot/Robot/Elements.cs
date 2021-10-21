@@ -61,7 +61,8 @@ namespace Robot
                 if (!ArduinoCommand.robot.Arduinos.ContainsKey(RequestArduino))
                 {
                     ArduinoCommand.log.LogError("erreur selection arduino {0} : {1}", RequestArduino, ID);
-                    return null;
+                    //On retourne une arduino fake pour eviter les problemes mais l'erreur est quand même soulever
+                    return new Arduino("FAKE", "FAKE", "noport", 9600);
                 }
                 arduino = ArduinoCommand.robot.Arduinos[RequestArduino];
             }

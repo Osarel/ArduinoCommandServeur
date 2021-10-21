@@ -115,9 +115,11 @@ namespace Robot
 
                 }
             }
-            catch
+            catch (Exception e)
             {
-                log.LogError("Erreur reception arduino");
+                log.LogError("Erreur reception arduino : {0}", valeur);
+                log.LogError(e.Message);
+                log.LogTrace(e.StackTrace);
             }
         }
 

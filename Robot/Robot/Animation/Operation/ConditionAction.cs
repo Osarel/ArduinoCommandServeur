@@ -1,6 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using System;
 
 namespace Robot.Action
 {
@@ -12,15 +10,15 @@ namespace Robot.Action
         public ConditionAction(AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, ConditionType, Condition, ID, Position, Output)
         {
         }
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
 
         }
 
-        protected override void CallOutput(Sheet sheet)
+        protected override void CallOutput()
         {
             //Si condition valide alors sortie 0 sinon sortie 1
-            base.CallOutput(sheet, Output[ConditionCheck(sheet) ? 0 : 1]);
+            base.CallOutput(Output[ConditionCheck() ? 0 : 1]);
         }
 
 

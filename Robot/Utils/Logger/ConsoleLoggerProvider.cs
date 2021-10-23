@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using Robot.Logger;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
-using Robot.Logger;
 
 public sealed class ConsoleLoggerProvider : ILoggerProvider
 {

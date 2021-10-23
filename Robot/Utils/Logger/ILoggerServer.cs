@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Logging;
 namespace Robot.Logger
 {
-    class ILoggerServer : ILogger 
+    class ILoggerServer : ILogger
     {
         private readonly string _name;
         private readonly Dictionary<LogLevel, LogLevelConfiguration> Config;

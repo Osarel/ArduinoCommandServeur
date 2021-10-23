@@ -139,7 +139,7 @@ namespace Robot
         public int Temps { get; set; }
         public int ActiveTimer { get; set; }
 
-        private Timer timer = new Timer(1000);
+        readonly private Timer timer = new Timer(1000);
         private bool active;
         public bool Active
         {

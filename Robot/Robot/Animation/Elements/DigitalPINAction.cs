@@ -18,7 +18,7 @@ namespace Robot.Action
             this.Value = Value;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             if (!(ArduinoCommand.robot.GetElementByUUID(Element) is PIN pin))
             {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using System;
 using System.Threading;
 using static Robot.Action.Liaison;
 
@@ -29,6 +28,7 @@ namespace Robot.Action
 
 
         public Thread Routine { get; private set; }
+        public Sheet sheet;
 
         [JsonConstructor]
         public AbstractAction(ActionType Type, bool Async, string ID, PointPosition Position, Liaison[] Output)
@@ -46,15 +46,16 @@ namespace Robot.Action
             {
                 return null;
             }
+            this.sheet = sheet;
             sheet.log.LogDebug("Déclanchement de : {0}", Type);
             Running = true;
             sheet.currentAction.Add(ID);
             Routine = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = Async;
-                Launch(sheet, caller);
-                Stop(sheet, false);
-                CallOutput(sheet);
+                Launch(caller);
+                Stop(false);
+                CallOutput();
             }
             );
             ArduinoCommand.eventG.FireActionStartedEvent(sheet, caller, this);
@@ -63,14 +64,14 @@ namespace Robot.Action
         }
 
 
-        protected virtual void CallOutput(Sheet sheet)
+        protected virtual void CallOutput()
         {
             foreach (Liaison value in Output)
             {
                 sheet.StartAnimations(value);
             }
         }
-        protected virtual void CallOutput(Sheet sheet, params Liaison[] args)
+        protected virtual void CallOutput(params Liaison[] args)
         {
             foreach (Liaison value in args)
             {
@@ -78,18 +79,18 @@ namespace Robot.Action
             }
         }
 
-        public virtual void Stop(Sheet sheet, bool force)
+        public virtual void Stop(bool force)
         {
             if (Routine != null && force)
             {
-                Routine.Abort();
+                Routine.Interrupt();
             }
             Running = false;
             sheet.currentAction.Remove(ID);
             ArduinoCommand.eventG.FireActionFinishEvent(sheet, this);
         }
 
-        protected abstract void Launch(Sheet sheet, Liaison caller);
+        protected abstract void Launch(Liaison caller);
 
     }
 

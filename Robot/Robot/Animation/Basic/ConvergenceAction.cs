@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using System;
+﻿using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -22,26 +20,27 @@ namespace Robot.Action
 
         public override Thread Start(Sheet sheet, Liaison caller)
         {
-            Launch(sheet, caller);
+            this.sheet = sheet;
+            Launch(caller);
 
             return Routine;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             Finish[ID] = Finish[ID] + 1;
             if (Finish[ID] >= Input)
             {
                 Finish[ID] = 0;
-                base.CallOutput(sheet);
+                base.CallOutput();
             }
             else
             {
-                CallOutput(sheet);
+                CallOutput();
             }
         }
 
-        protected override void CallOutput(Sheet sheet)
+        protected override void CallOutput()
         {
         }
 

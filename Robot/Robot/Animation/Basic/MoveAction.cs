@@ -17,7 +17,7 @@ namespace Robot.Action
             this.To = To;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             sheet.SetVariable(To, sheet.ReadFloat(From));
         }

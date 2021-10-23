@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Threading;
 
@@ -81,7 +80,7 @@ namespace Robot.Action
         {
             if (action.TryGetValue(id, out AbstractAction a))
             {
-                a.Stop(this, true);
+                a.Stop(true);
             }
         }
 

@@ -24,7 +24,7 @@ namespace Robot.Action
             this.OperationType = OperationType;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             try
             {

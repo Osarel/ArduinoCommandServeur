@@ -21,12 +21,12 @@ namespace Robot
         [JsonProperty]
         public int BaudRate { get; set; }
         private SerialPort port;
-        private ILogger log;
+        private readonly ILogger log;
 
         public class ThreadActionPin
         {
-            Action<Dictionary<string, object>, object> action;
-            object obj;
+            readonly Action<Dictionary<string, object>, object> action;
+            readonly object obj;
 
             public ThreadActionPin(Action<Dictionary<string, object>, object> action, object obj)
             {

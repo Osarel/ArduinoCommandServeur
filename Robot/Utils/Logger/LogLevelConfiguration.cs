@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Robot.Logger
 {
-     class LogLevelConfiguration
+    class LogLevelConfiguration
     {
         public ConsoleColor TitleColor;
         public ConsoleColor ForegroundColor;

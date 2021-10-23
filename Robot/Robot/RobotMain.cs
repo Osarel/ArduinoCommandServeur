@@ -156,7 +156,7 @@ namespace Robot
 
         public void LoadAnimations()
         {
-            log.LogInformation ("Chargement des animations ..");
+            log.LogInformation("Chargement des animations ..");
             string[] files = Directory.GetFiles(Directory.GetCurrentDirectory() + "/Animations/");
             foreach (string value in files)
             {

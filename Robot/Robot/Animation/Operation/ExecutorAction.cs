@@ -20,7 +20,7 @@ namespace Robot.Action
             this.Variable = Variable;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             if (!Executor)
             {
@@ -30,7 +30,8 @@ namespace Robot.Action
                     return;
                 }
                 launch.StartSheet(Variable);
-            } else
+            }
+            else
             {
                 switch (Value)
                 {
@@ -42,6 +43,9 @@ namespace Robot.Action
                         break;
                     case "RESTART_ROBOT":
                         ArduinoCommand.demande_restart = true;
+                        break;
+                    case "STOP_COMPUTER":
+                        ArduinoCommand.shutdown = true;
                         break;
                 }
             }

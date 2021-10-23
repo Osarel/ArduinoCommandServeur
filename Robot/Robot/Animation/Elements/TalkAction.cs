@@ -14,7 +14,7 @@ namespace Robot.Action
             this.Message = Message;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             Speaker.Say(Message);
         }

@@ -16,7 +16,7 @@ namespace Robot.Action
             this.Temps = Temps;
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
             Thread.Sleep(Temps);
         }

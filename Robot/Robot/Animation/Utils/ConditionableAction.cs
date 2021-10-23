@@ -20,12 +20,12 @@ namespace Robot.Action
             this.ConditionType = ConditionType;
             this.Condition = Condition;
         }
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
 
         }
 
-        public bool ConditionCheck(Sheet sheet)
+        public bool ConditionCheck()
         {
             double value = 0;
             string[] conditionParse = Condition.Split(" ");

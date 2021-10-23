@@ -11,12 +11,12 @@ namespace Robot.Action
         {
         }
 
-        protected override void Launch(Sheet sheet, Liaison caller)
+        protected override void Launch(Liaison caller)
         {
 
         }
 
-        protected override void CallOutput(Sheet sheet)
+        protected override void CallOutput()
         {
             foreach (Liaison value in Output)
             {

@@ -54,10 +54,7 @@ namespace Robot.Serveur
                 SocketType.AUTHENTIFICATION => new ExecutorAuthentification(this),
                 SocketType.PORTLISTE => new ExecutorPortListe(this),
                 SocketType.SYSTEMSTATUS => new ExecutorSystemStatus(this),
-                SocketType.START => new ExecutorStartSystem(this),
-                SocketType.STOP => new ExecutorStopSystem(this),
-                SocketType.RESTART => new ExecutorRestartSystem(this),
-                SocketType.STOPMOVE => new ExecutorStopMove(this),
+                SocketType.SYSTEMACTION => new ExecutorSystemAction(this),
                 SocketType.CREATE => new ExecutorCreate(this),
                 SocketType.UPDATE => new ExecutorUpdate(this),
                 SocketType.REMOVE => new ExecutorRemove(this),
@@ -171,10 +168,10 @@ namespace Robot.Serveur
         }
     }
 
-    public class ExecutorStartSystem : SocketReplyExecutor
+    public class ExecutorSystemAction : SocketReplyExecutor
     {
 
-        public ExecutorStartSystem(SocketReader reader) : base(reader)
+        public ExecutorSystemAction(SocketReader reader) : base(reader)
         {
         }
 
@@ -186,71 +183,8 @@ namespace Robot.Serveur
 
         public override bool Execute()
         {
-            ArduinoCommand.robot.StartRobot();
-            reader.client.Send(new SocketReply(SocketType.START, false).Build());
-            return true;
-        }
-    }
-
-    public class ExecutorStopSystem : SocketReplyExecutor
-    {
-
-        public ExecutorStopSystem(SocketReader reader) : base(reader)
-        {
-        }
-
-
-        override public bool Validate()
-        {
-            return true;
-        }
-
-        public override bool Execute()
-        {
-            ArduinoCommand.demande_arret = true;
-            reader.client.Send(new SocketReply(SocketType.STOP, false).Build());
-            return true;
-        }
-    }
-    public class ExecutorRestartSystem : SocketReplyExecutor
-    {
-
-        public ExecutorRestartSystem(SocketReader reader) : base(reader)
-        {
-        }
-
-
-        override public bool Validate()
-        {
-            return true;
-        }
-
-        public override bool Execute()
-        {
-            ArduinoCommand.demande_restart = true;
-            SocketServer.log.LogDebug("Demande restart web");
-            reader.client.Send(new SocketReply(SocketType.RESTART, false).Build());
-            return true;
-        }
-    }
-
-    public class ExecutorStopMove : SocketReplyExecutor
-    {
-
-        public ExecutorStopMove(SocketReader reader) : base(reader)
-        {
-        }
-
-
-        override public bool Validate()
-        {
-            return true;
-        }
-
-        public override bool Execute()
-        {
-            ArduinoCommand.robot.StopMoveRobot();
-            reader.client.Send(new SocketReply(SocketType.STOPMOVE, false).Build());
+            ArduinoCommand.SystemAction((string) reader.socketRequest["action"]);
+            reader.client.Send(new SocketReply(SocketType.SYSTEMACTION, false).Build());
             return true;
         }
     }

@@ -74,7 +74,7 @@ class ArduinoCommand
 
     }
 
-    public static async void Update()
+    public static async void Update(bool Force)
     {
         try
         {
@@ -88,7 +88,7 @@ class ArduinoCommand
 
             log.LogWarning("Une mise à jour est disponible !");
             // Preparation de la mise à jour
-            if (!robot.Options.autoUpdate)
+            if (!robot.Options.autoUpdate && !Force)
             {
                 return;
             }
@@ -119,7 +119,7 @@ class ArduinoCommand
         //Chargement des fichiers du robot
         Load();
         log.LogInformation("Chargement des fichiers fini.");
-        Update();
+        Update(false);
         //Lancement du serveur Websocketg
         Thread robotThread = new Thread(() =>
         {
@@ -205,5 +205,34 @@ class ArduinoCommand
         robot = new RobotMain();
         robot.LoadDataFromConfig();
         Speaker.LoadVocalCache();
+    }
+
+
+    public static bool SystemAction(string action)
+    {
+        switch (action)
+        {
+            case "STOP_MOVE":
+                robot.StopMoveRobot();
+                break;
+            case "START_ROBOT":
+                robot.StartRobot();
+                break;
+            case "STOP_ROBOT":
+                demande_arret = true;
+                break;
+            case "RESTART_ROBOT":
+                demande_restart = true;
+                break;
+            case "STOP_COMPUTER":
+                shutdown = true;
+                break;
+            case "FORCE_UPDATE":
+                Update(true);
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 }

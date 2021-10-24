@@ -10,10 +10,7 @@ namespace Robot.Serveur
         AUTHENTIFICATIONREQUEST,
         PORTLISTE,
         SYSTEMSTATUS,
-        START,
-        STOP,
-        STOPMOVE,
-        RESTART,
+        SYSTEMACTION,
         CHAT,
 
         CREATE,

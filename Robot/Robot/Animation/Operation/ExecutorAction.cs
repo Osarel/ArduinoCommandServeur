@@ -33,21 +33,7 @@ namespace Robot.Action
             }
             else
             {
-                switch (Value)
-                {
-                    case "STOP_MOVE":
-                        ArduinoCommand.robot.StopMoveRobot();
-                        break;
-                    case "STOP_ROBOT":
-                        ArduinoCommand.demande_arret = true;
-                        break;
-                    case "RESTART_ROBOT":
-                        ArduinoCommand.demande_restart = true;
-                        break;
-                    case "STOP_COMPUTER":
-                        ArduinoCommand.shutdown = true;
-                        break;
-                }
+                ArduinoCommand.SystemAction(Value);
             }
 
 

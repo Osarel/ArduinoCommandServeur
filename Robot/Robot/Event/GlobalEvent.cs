@@ -71,9 +71,9 @@ namespace Robot.Event
         {
             EventHandlerExtensions.SafeInvoke(SheetFinishEvent, null, new SheetFinishEvent(Sheet));
         }
-        public void FireActionStartedEvent(Sheet Sheet, Liaison Liaison, AbstractAction Action)
+        public void FireActionStartedEvent(Sheet Sheet, AbstractAction Action)
         {
-            EventHandlerExtensions.SafeInvoke(ActionsStartedEvent, null, new ActionStartedEvent(Sheet, Liaison, Action));
+            EventHandlerExtensions.SafeInvoke(ActionsStartedEvent, null, new ActionStartedEvent(Sheet, Action));
         }
         public void FireActionFinishEvent(Sheet Sheet, AbstractAction Action)
         {

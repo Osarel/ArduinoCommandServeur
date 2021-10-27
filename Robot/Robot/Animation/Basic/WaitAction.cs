@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using System.Threading;
-using static Robot.Action.Liaison;
 
 namespace Robot.Action
 {
@@ -11,12 +10,12 @@ namespace Robot.Action
         private readonly int Temps;
 
         [JsonConstructor]
-        public WaitAction(int Temps, string ID, PointPosition Position, Liaison[] Output) : base(ActionType.WAIT, false, ID, Position, Output)
+        public WaitAction(int Temps, string ID, CubePositionAction Cube) : base(ActionType.WAIT, false, ID, Cube)
         {
             this.Temps = Temps;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             Thread.Sleep(Temps);
         }

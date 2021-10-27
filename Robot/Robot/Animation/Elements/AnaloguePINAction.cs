@@ -12,13 +12,13 @@ namespace Robot.Action
         [JsonConverter(typeof(StringEnumConverter))]
         private readonly float Value;
         [JsonConstructor]
-        public AnaloguePINAction(string Element, float Value, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.ANALOG, false, ID, Position, Output)
+        public AnaloguePINAction(string Element, float Value, string ID, CubePositionAction Cube) : base(ActionType.ANALOG, false, ID, Cube)
         {
             this.Element = Element;
             this.Value = Value;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (!(ArduinoCommand.robot.GetElementByUUID(Element) is PIN pin))
             {

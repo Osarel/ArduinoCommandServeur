@@ -16,7 +16,7 @@ namespace Robot.Action
         private readonly OperationType OperationType;
 
         [JsonConstructor]
-        public OperationAction(OperationType OperationType, string Base, string Add, string To, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.OPERATION, false, ID, Position, Output)
+        public OperationAction(OperationType OperationType, string Base, string Add, string To, string ID, CubePositionAction Cube) : base(ActionType.OPERATION, false, ID, Cube)
         {
             this.Base = Base;
             this.Add = Add;
@@ -24,7 +24,7 @@ namespace Robot.Action
             this.OperationType = OperationType;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             try
             {

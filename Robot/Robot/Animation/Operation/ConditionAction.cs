@@ -7,18 +7,24 @@ namespace Robot.Action
     {
 
         [JsonConstructor]
-        public ConditionAction(AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, ConditionType, Condition, ID, Position, Output)
+        public ConditionAction(AnimatorConditionType ConditionType, string Condition, string ID, CubePositionAction Cube) : base(ActionType.CONDITION, ConditionType, Condition, ID, Cube)
         {
         }
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
 
         }
 
-        protected override void CallOutput()
+        protected override void Next()
         {
-            //Si condition valide alors sortie 0 sinon sortie 1
-            base.CallOutput(Output[ConditionCheck() ? 0 : 1]);
+            //Si condition valide alors sortie Top sinon sortie Bottom
+            if (ConditionCheck())
+            {
+                 Top();
+            } else
+            {
+                 Bottom();
+            }
         }
 
 

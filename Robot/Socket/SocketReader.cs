@@ -163,7 +163,10 @@ namespace Robot.Serveur
 
         public override bool Execute()
         {
-            reader.client.Send(new SocketReply(SocketType.SYSTEMSTATUS, false).AddContent(ArduinoCommand.robot.StatusSystem()).Build());
+            SocketReply reply = new SocketReply(SocketType.SYSTEMSTATUS, false);
+            reply.AddContent(ArduinoCommand.robot.StatusSystem());
+            reply.AddKeyValue("version", CoreAssembly.Version.ToString());
+            reader.client.Send(reply.Build());
             return true;
         }
     }

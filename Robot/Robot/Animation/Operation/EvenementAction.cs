@@ -23,13 +23,13 @@ namespace Robot.Action
 
         public Dictionary<string, EventHandler<Event.Args.ElementActualValueChanged>> ObservatorList = new Dictionary<string, EventHandler<Event.Args.ElementActualValueChanged>>();
         [JsonConstructor]
-        public EvenementAction(AnimatorEvenementType ConditionType, string Condition, string Element, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONDITION, false, ID, Position, Output)
+        public EvenementAction(AnimatorEvenementType ConditionType, string Condition, string Element, string ID, CubePositionAction Cube) : base(ActionType.CONDITION, false, ID, Cube)
         {
             this.ConditionType = ConditionType;
             this.Condition = Condition;
             this.Element = Element;
         }
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (ConditionType == AnimatorEvenementType.Capteur)
             {
@@ -46,7 +46,7 @@ namespace Robot.Action
             Element element = ArduinoCommand.robot.GetElementByUUID(Element);
             if (element == null)
             {
-                CallOutput(); //E
+                base.Finish();
             }
             string observatorID = Guid.NewGuid().ToString();
             void handler(object sender, Event.Args.ElementActualValueChanged e) => Element_ActualValueChangedHandler(sender, e, observatorID);
@@ -77,41 +77,25 @@ namespace Robot.Action
             var removM = ev.GetRemoveMethod();
             removM.Invoke(ArduinoCommand.eventG, new object[] { eh });
             sheet.log.LogDebug("Evenement survenue {0} .. suite", Element);
-            CallOutput();
+            base.Finish();
         }
 
         private void Element_ActualValueChangedHandler(object sender, Event.Args.ElementActualValueChanged e, string id)
         {
             if (Utils.MadeCondition(e.NewValue, SecondArgument, Condition))
             {
-                CallOutput();
+                Next();
                 Element element = (Element)sender;
                 element.ActualValueChangedHandler -= ObservatorList[id];
                 ObservatorList.Remove(id);
-                base.Stop(false);
+                base.Finish();
 
             }
         }
 
-        public override Thread Start(Sheet sheet, Liaison caller)
+        protected override void Finish()
         {
-            this.sheet = sheet;
-            if (Running)
-            {
-                return null;
-            }
-            sheet.log.LogDebug("Déclanchement de : " + Type);
-            Running = true;
-            sheet.currentAction.Add(ID);
-            Thread thread = new Thread(() =>
-            {
 
-                Launch(caller);
-            }
-            );
-            thread.Start();
-            thread.Join();
-            return thread;
         }
 
 

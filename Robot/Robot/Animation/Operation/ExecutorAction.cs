@@ -14,13 +14,13 @@ namespace Robot.Action
         private readonly Dictionary<string, object> Variable;
 
         [JsonConstructor]
-        public ExecutorAction(bool Async, string Value, Dictionary<string, object> Variable, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.EXECUTOR, Async, ID, Position, Output)
+        public ExecutorAction(bool Async, string Value, Dictionary<string, object> Variable, string ID, CubePositionAction Cube) : base(ActionType.EXECUTOR, Async, ID, Cube)
         {
             this.Value = Value;
             this.Variable = Variable;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (!Executor)
             {

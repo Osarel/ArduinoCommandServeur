@@ -7,26 +7,19 @@ namespace Robot.Action
     class DivergenceAction : AbstractAction
     {
         [JsonConstructor]
-        public DivergenceAction(string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.DIVERGENCE, false, ID, Position, Output)
+        public DivergenceAction(string ID, CubePositionAction Cube) : base(ActionType.DIVERGENCE, false, ID, Cube)
         {
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
 
         }
 
-        protected override void CallOutput()
+        protected override void Next()
         {
-            foreach (Liaison value in Output)
-            {
-                Thread thread = new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    sheet.StartAnimations(value);
-                });
-                thread.Start();
-            }
+            Top();
+            Bottom();
         }
 
 

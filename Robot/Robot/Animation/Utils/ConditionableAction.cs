@@ -15,12 +15,12 @@ namespace Robot.Action
         public string Condition;
 
         [JsonConstructor]
-        public ConditionableAction(ActionType type, AnimatorConditionType ConditionType, string Condition, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(type, false, ID, Position, Output)
+        public ConditionableAction(ActionType type, AnimatorConditionType ConditionType, string Condition, string ID, CubePositionAction Cube) : base(type, false, ID, Cube)
         {
             this.ConditionType = ConditionType;
             this.Condition = Condition;
         }
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
 
         }

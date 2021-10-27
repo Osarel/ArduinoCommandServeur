@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Threading;
-using static Robot.Action.Liaison;
 
 namespace Robot.Action
 {
@@ -19,64 +18,90 @@ namespace Robot.Action
         public bool Running = false;
         [JsonProperty]
         public string ID { get; private set; }
-        [JsonProperty]
-        public int State = 0;
-        [JsonProperty]
-        public Liaison[] Output;
-        [JsonProperty]
-        public PointPosition Position;
 
+        [JsonProperty]
+        public CubePositionAction Cube;
 
+        public string idCaller;
         public Thread Routine { get; private set; }
         public Sheet sheet;
 
         [JsonConstructor]
-        public AbstractAction(ActionType Type, bool Async, string ID, PointPosition Position, Liaison[] Output)
+        public AbstractAction(ActionType Type, bool Async, string ID, CubePositionAction Cube)
         {
             this.Type = Type;
             this.Async = Async;
             this.ID = ID;
-            this.Position = Position;
-            this.Output = Output;
+            this.Cube = Cube;
         }
 
-        public virtual Thread Start(Sheet sheet, Liaison caller)
+        public virtual Thread Start(Sheet sheet, string caller)
         {
+            //Si deja en cours on stop ici
             if (Running)
             {
                 return null;
             }
+
+            //Définition variable de fonctionnement 
             this.sheet = sheet;
+            this.idCaller = caller;
             sheet.log.LogDebug("Déclanchement de : {0}", Type);
             Running = true;
-            sheet.currentAction.Add(ID);
+            sheet.currentAction.Add(this);
+
+            //Déclanchement de la routine
             Routine = new Thread(() =>
             {
                 Thread.CurrentThread.IsBackground = Async;
-                Launch(caller);
-                Stop(false);
-                CallOutput();
+                Launch();
+                Finish();
             }
             );
-            ArduinoCommand.eventG.FireActionStartedEvent(sheet, caller, this);
+            ArduinoCommand.eventG.FireActionStartedEvent(sheet, this);
             Routine.Start();
             return Routine;
         }
 
-
-        protected virtual void CallOutput()
+        protected virtual void Finish()
         {
-            foreach (Liaison value in Output)
-            {
-                sheet.StartAnimations(value);
-            }
+            Stop(false);
+            Next();
         }
-        protected virtual void CallOutput(params Liaison[] args)
+
+        public static bool SecureStart(AbstractAction action, Sheet sheet, string IDCaller, string IDBase)
         {
-            foreach (Liaison value in args)
+            if (action == null)
             {
-                sheet.StartAnimations(value);
+                return false;
             }
+            if (action.ID == IDBase)
+            {
+                return false;
+            }
+
+            action.Start(sheet, IDCaller);
+
+            return true;
+        }
+
+        public static bool SecureStart(AbstractAction action, Sheet sheet, string IDCaller)
+        {
+           return SecureStart(action, sheet, IDCaller, "");
+        }
+        protected virtual void Next()
+        {
+            SecureStart(Cube.Right, sheet,  ID, idCaller);
+        }
+
+        protected virtual void Top()
+        {
+            SecureStart(Cube.Right, sheet, idCaller);
+        }
+
+        protected virtual void Bottom()
+        {
+            SecureStart(Cube.Right, sheet, idCaller);
         }
 
         public virtual void Stop(bool force)
@@ -86,11 +111,11 @@ namespace Robot.Action
                 Routine.Interrupt();
             }
             Running = false;
-            sheet.currentAction.Remove(ID);
+            sheet.currentAction.Remove(this);
             ArduinoCommand.eventG.FireActionFinishEvent(sheet, this);
         }
 
-        protected abstract void Launch(Liaison caller);
+        protected abstract void Launch();
 
     }
 
@@ -110,4 +135,16 @@ namespace Robot.Action
         LED,
         EXECUTOR
     }
+
+    [JsonObject(MemberSerialization.OptIn)]
+    public class CubePositionAction
+    {
+        [JsonProperty]
+        public AbstractAction Top;
+        [JsonProperty]
+        public AbstractAction Right;
+        [JsonProperty]
+        public AbstractAction Bottom;
+    }
 }
+

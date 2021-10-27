@@ -18,7 +18,7 @@ namespace Robot
 
     public class ActionConverter : JsonConverter
     {
-        static JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ActionSpecifiedConcreteClassConverter() };
+        static readonly JsonSerializerSettings SpecifiedSubclassConversion = new JsonSerializerSettings() { ContractResolver = new ActionSpecifiedConcreteClassConverter() };
 
         public override bool CanConvert(Type objectType)
         {

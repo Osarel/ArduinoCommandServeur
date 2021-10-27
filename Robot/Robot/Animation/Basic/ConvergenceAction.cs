@@ -10,40 +10,29 @@ namespace Robot.Action
 
         [JsonProperty]
         public readonly int Input;
-        public static IDictionary<string, int> Finish = new Dictionary<string, int>();
+
+        public int finish = 0;
         [JsonConstructor]
-        public ConvergenceAction(string ID, int Input, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.CONVERGENCE, false, ID, Position, Output)
+        public ConvergenceAction(string ID, int Input, CubePositionAction Cube) : base(ActionType.CONVERGENCE, false, ID, Cube)
         {
-            Finish[ID] = 0;
             this.Input = Input;
         }
 
-        public override Thread Start(Sheet sheet, Liaison caller)
-        {
-            this.sheet = sheet;
-            Launch(caller);
 
-            return Routine;
-        }
-
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
-            Finish[ID] = Finish[ID] + 1;
-            if (Finish[ID] >= Input)
+            finish++;
+            if (finish >= Input)
             {
-                Finish[ID] = 0;
-                base.CallOutput();
-            }
-            else
-            {
-                CallOutput();
+                finish = 0;
+                base.Finish();
             }
         }
 
-        protected override void CallOutput()
+        protected override void Finish()
         {
+            Stop(false);
         }
-
 
     }
 }

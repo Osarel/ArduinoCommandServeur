@@ -25,12 +25,10 @@ namespace Robot.Event.Args
     public class ActionStartedEvent : EventArgs
     {
         public Sheet Sheet { get; }
-        public Liaison Liaison { get; }
         public AbstractAction Action { get; }
-        public ActionStartedEvent(Sheet Sheet, Liaison Liaison, AbstractAction Action)
+        public ActionStartedEvent(Sheet Sheet, AbstractAction Action)
         {
             this.Sheet = Sheet;
-            this.Liaison = Liaison;
             this.Action = Action;
         }
     }

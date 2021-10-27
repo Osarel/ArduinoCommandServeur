@@ -20,7 +20,8 @@ namespace Robot.Action
         [JsonProperty]
         private readonly int Speed;
         [JsonConstructor]
-        public LEDEffectAction(bool Async, LEDEffectType LEDEffectType, Color BaseColor, string Element, int Timeout, int Speed, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.LED, Async, ID, Position, Output)
+        public LEDEffectAction(bool Async, LEDEffectType LEDEffectType, Color BaseColor, string Element, int Timeout, int Speed, string ID, CubePositionAction Cube)
+            : base(ActionType.LED, Async, ID, Cube)
         {
             this.LEDEffectType = LEDEffectType;
             this.BaseColor = BaseColor;
@@ -29,7 +30,7 @@ namespace Robot.Action
             this.Speed = Speed;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (!(ArduinoCommand.robot.GetElementByUUID(Element) is LED element))
             {

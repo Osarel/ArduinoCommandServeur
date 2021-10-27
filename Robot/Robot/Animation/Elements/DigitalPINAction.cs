@@ -12,13 +12,13 @@ namespace Robot.Action
         [JsonConverter(typeof(StringEnumConverter))]
         private readonly DigitalState Value;
         [JsonConstructor]
-        public DigitalPINAction(string Element, DigitalState Value, string ID, Liaison.PointPosition Position, Liaison[] Output) : base(ActionType.DIGITAL, false, ID, Position, Output)
+        public DigitalPINAction(string Element, DigitalState Value, string ID, CubePositionAction Cube) : base(ActionType.DIGITAL, false, ID, Cube)
         {
             this.Element = Element;
             this.Value = Value;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (!(ArduinoCommand.robot.GetElementByUUID(Element) is PIN pin))
             {

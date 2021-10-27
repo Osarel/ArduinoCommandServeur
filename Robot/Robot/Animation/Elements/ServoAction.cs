@@ -11,13 +11,13 @@ namespace Robot.Action
         [JsonProperty]
         private readonly int PositionServo;
         [JsonConstructor]
-        public ServoAction(string Element, int PositionServo, string ID, Liaison.PointPosition Point, Liaison[] Output) : base(ActionType.SERVO, false, ID, Point, Output)
+        public ServoAction(string Element, int PositionServo, string ID, CubePositionAction Cube) : base(ActionType.SERVO, false, ID, Cube)
         {
             this.Element = Element;
             this.PositionServo = PositionServo;
         }
 
-        protected override void Launch(Liaison caller)
+        protected override void Launch()
         {
             if (!(ArduinoCommand.robot.GetElementByUUID(Element) is ServoMotor servo))
             {

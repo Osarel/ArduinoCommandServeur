@@ -13,75 +13,47 @@ namespace Robot.Action
         [JsonProperty]
         public string Name;
         [JsonProperty]
-        public Dictionary<string, AbstractAction> action;
-        [JsonProperty]
         public Dictionary<string, object> variable;
         [JsonProperty]
-        public List<string> currentAction;
-        [JsonProperty]
-        public Liaison[] startupPoint;
+        public AbstractAction startupPoint;
 
+        public List<AbstractAction> currentAction = new List<AbstractAction>();
         public ILogger log;
         [JsonConstructor]
-        public Sheet(string ID, string Name, Dictionary<string, AbstractAction> action, Dictionary<string, object> variable, Liaison[] startupPoint)
+        public Sheet(string ID, string Name, Dictionary<string, object> variable, AbstractAction startupPoint)
         {
             this.ID = ID;
             this.Name = Name;
-            this.action = action;
             this.variable = variable;
             this.startupPoint = startupPoint;
-            currentAction = new List<string>();
             log = ArduinoCommand.loggerProvider.CreateLogger(Name);
         }
-
-        public void StartAnimations(Liaison value)
-        {
-            if (action.TryGetValue(value.IDTo, out AbstractAction a))
-            {
-                a.Start(this, value);
-            }
-        }
-
 
         public bool StartSheet(Dictionary<string, object> variable)
         {
             ArduinoCommand.eventG.FireSheetStartedEvent(this, variable);
-            if (currentAction.Count > 0)
-            {
-                return false;
-            }
+
             if (variable != null)
             {
                 this.variable = variable;
             }
             log.LogInformation("Démarrage de l'animation : " + Name);
-            foreach (Liaison value in startupPoint)
+            Thread thread = new Thread(() =>
             {
-                Thread thread = new Thread(() =>
-                {
-                    Thread.CurrentThread.IsBackground = true;
-                    StartAnimations(value);
-                });
-                thread.Start();
-            }
+                Thread.CurrentThread.IsBackground = true;
+                AbstractAction.SecureStart(startupPoint, this, "main");
+            });
+            thread.Start();
             return true;
         }
 
         public void ForceStopSheet()
         {
-            foreach (string a in currentAction)
-            {
-                ForceStopAction(a);
-            }
-            ArduinoCommand.eventG.FireSheetFinishEvent(this);
-        }
-
-        public void ForceStopAction(string id)
-        {
-            if (action.TryGetValue(id, out AbstractAction a))
+            foreach (AbstractAction a in currentAction)
             {
                 a.Stop(true);
             }
+            ArduinoCommand.eventG.FireSheetFinishEvent(this);
         }
 
         public void SetVariable(string to, object p)
